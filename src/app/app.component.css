@@ -1,0 +1,10 @@
+.main-content {
+  min-height: 80vh;
+  padding-top: 86px; /* Offset for fixed sticky navbar */
+}
+
+@media (max-width: 991px) {
+  .main-content {
+    padding-top: 76px; /* Offset for mobile view */
+  }
+}

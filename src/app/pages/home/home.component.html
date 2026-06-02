@@ -1,0 +1,182 @@
+<!-- Hero Section -->
+<section class="hero-section position-relative d-flex align-items-center justify-content-center overflow-hidden">
+  <div class="hero-bg position-absolute top-0 start-0 w-100 h-100"></div>
+  <div class="dark-overlay position-absolute top-0 start-0 w-100 h-100"></div>
+  
+  <div class="container position-relative z-1 text-center">
+    <span class="text-gold font-accent fw-semibold tracking-wide mb-3 d-inline-block text-uppercase animate-up" style="animation-delay: 0.1s">Welcome to FoodieHub</span>
+    <h1 class="display-3 fw-bold text-white mb-4 animate-up text-gradient" style="animation-delay: 0.3s">Where Gourmet Meets Passion</h1>
+    <p class="lead text-secondary mx-auto mb-5 max-w-600 animate-up" style="animation-delay: 0.5s">
+      Experience culinary brilliance in a setting designed for memorable conversations. Fresh ingredients, masterful recipes, and exceptional service.
+    </p>
+    <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 animate-up" style="animation-delay: 0.7s">
+      <a routerLink="/menu" class="btn btn-gold px-5 py-3 font-accent">Explore Menu</a>
+      <a routerLink="/reservation" class="btn btn-outline-gold px-5 py-3 font-accent">Reserve A Table</a>
+    </div>
+  </div>
+  
+  <!-- Floating food element decorations for a playful dynamic effect -->
+  <div class="floating-item item-1 position-absolute d-none d-lg-block">
+    <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=150" alt="pizza slice" class="floating img-fluid rounded-circle">
+  </div>
+  <div class="floating-item item-2 position-absolute d-none d-lg-block">
+    <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&q=80&w=150" alt="fresh salad" class="floating img-fluid rounded-circle">
+  </div>
+</section>
+
+<!-- Category Carousel Section -->
+<section class="carousel-section section-padding bg-darker">
+  <div class="container">
+    <div class="section-title">
+      <span class="text-gold font-accent small text-uppercase fw-semibold tracking-wide">Specials & Categories</span>
+      <h2>Discover Our Specialties</h2>
+      <p>Browse through our handpicked culinary categories designed to satisfy every craving.</p>
+    </div>
+
+    <!-- Bootstrap Carousel -->
+    <div id="recipeCarousel" class="carousel slide carousel-fade glass-card overflow-hidden" data-bs-ride="carousel">
+      <div class="carousel-indicators">
+        <button *ngFor="let slide of carouselSlides; let i = index" type="button" data-bs-target="#recipeCarousel" [attr.data-bs-slide-to]="i" [class.active]="i === 0" [attr.aria-current]="i === 0 ? 'true' : null" [attr.aria-label]="'Slide ' + (i + 1)"></button>
+      </div>
+      
+      <div class="carousel-inner">
+        <div *ngFor="let slide of carouselSlides; let i = index" class="carousel-item" [class.active]="i === 0" data-bs-interval="4000">
+          <div class="carousel-image-wrapper position-relative">
+            <img [src]="slide.image" class="d-block w-100 carousel-img" [alt]="slide.title">
+            <div class="dark-overlay position-absolute top-0 start-0 w-100 h-100"></div>
+          </div>
+          <div class="carousel-caption d-flex flex-column justify-content-center align-items-center text-center p-4">
+            <h3 class="display-5 text-white fw-bold mb-3 slide-title font-accent">{{ slide.title }}</h3>
+            <p class="fs-5 text-secondary mb-4 slide-desc max-w-600">{{ slide.subtitle }}</p>
+            <a [routerLink]="slide.link" [queryParams]="{category: slide.category}" class="btn btn-gold font-accent px-4 py-2">View Category</a>
+          </div>
+        </div>
+      </div>
+
+      <button class="carousel-control-prev" type="button" data-bs-target="#recipeCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#recipeCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Dishes Section -->
+<section class="featured-section section-padding">
+  <div class="container">
+    <div class="section-title">
+      <span class="text-gold font-accent small text-uppercase fw-semibold tracking-wide">Chef Recommends</span>
+      <h2>Featured Culinary Art</h2>
+      <p>Indulge in our most highly-acclaimed and requested signature creations.</p>
+    </div>
+
+    <!-- Loading skeletons -->
+    <div class="row g-4" *ngIf="isLoading">
+      <div class="col-lg-4 col-md-6" *ngFor="let item of [1, 2, 3]">
+        <div class="skeleton-card"></div>
+      </div>
+    </div>
+
+    <!-- Grid of food cards -->
+    <div class="row g-4" *ngIf="!isLoading">
+      <div class="col-lg-4 col-md-6 fade-in" *ngFor="let recipe of featuredRecipes">
+        <app-food-card [recipe]="recipe"></app-food-card>
+      </div>
+    </div>
+
+    <div class="text-center mt-5">
+      <a routerLink="/menu" class="btn btn-outline-gold font-accent px-5 py-3">View Entire Menu</a>
+    </div>
+  </div>
+</section>
+
+<!-- Why Choose Us Section -->
+<section class="why-us-section section-padding bg-darker">
+  <div class="container">
+    <div class="section-title">
+      <span class="text-gold font-accent small text-uppercase fw-semibold tracking-wide">Our Promise</span>
+      <h2>Why Choose FoodieHub</h2>
+      <p>We combine exquisite culinary skills, fresh local ingredients, and exceptional service to deliver perfection.</p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Card 1: Fast Delivery -->
+      <div class="col-lg-3 col-md-6">
+        <div class="feature-card glass-card p-5 text-center">
+          <div class="icon-box mb-4">
+            <i class="fa-solid fa-truck-fast text-gold"></i>
+          </div>
+          <h3 class="h5 mb-3 font-accent fw-bold">Swift Delivery</h3>
+          <p class="text-secondary small">Your food is dispatched in thermal bags to ensure it arrives piping hot and fresh.</p>
+        </div>
+      </div>
+
+      <!-- Card 2: Fresh Ingredients -->
+      <div class="col-lg-3 col-md-6">
+        <div class="feature-card glass-card p-5 text-center">
+          <div class="icon-box mb-4">
+            <i class="fa-solid fa-leaf text-gold"></i>
+          </div>
+          <h3 class="h5 mb-3 font-accent fw-bold">Fresh Ingredients</h3>
+          <p class="text-secondary small">We source our vegetables, meats, and spices daily from verified organic farms.</p>
+        </div>
+      </div>
+
+      <!-- Card 3: Best Chefs -->
+      <div class="col-lg-3 col-md-6">
+        <div class="feature-card glass-card p-5 text-center">
+          <div class="icon-box mb-4">
+            <i class="fa-solid fa-user-tie text-gold"></i>
+          </div>
+          <h3 class="h5 mb-3 font-accent fw-bold">Master Chefs</h3>
+          <p class="text-secondary small">Our kitchens are led by award-winning chefs with decades of fine dining experience.</p>
+        </div>
+      </div>
+
+      <!-- Card 4: Premium Quality -->
+      <div class="col-lg-3 col-md-6">
+        <div class="feature-card glass-card p-5 text-center">
+          <div class="icon-box mb-4">
+            <i class="fa-solid fa-award text-gold"></i>
+          </div>
+          <h3 class="h5 mb-3 font-accent fw-bold">Premium Quality</h3>
+          <p class="text-secondary small">No preservatives, artificial colors, or compromises. Absolute gourmet quality.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Customer Testimonials Section -->
+<section class="testimonials-section section-padding">
+  <div class="container">
+    <div class="section-title">
+      <span class="text-gold font-accent small text-uppercase fw-semibold tracking-wide">Reviews</span>
+      <h2>What Our Guests Say</h2>
+      <p>Read honest feedback from culinary enthusiasts and our regular dining members.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6" *ngFor="let review of testimonials">
+        <div class="testimonial-card glass-card p-4 d-flex flex-column h-100">
+          <div class="rating-stars mb-3">
+            <i class="fa-solid fa-star text-warning me-1" *ngFor="let star of [].constructor(review.rating)"></i>
+            <i class="fa-regular fa-star text-muted me-1" *ngFor="let star of [].constructor(5 - review.rating)"></i>
+          </div>
+          <p class="text-secondary flex-grow-1 font-italic mb-4">"{{ review.text }}"</p>
+          <div class="d-flex align-items-center mt-auto border-top border-light pt-3">
+            <img [src]="review.avatar" [alt]="review.name" class="rounded-circle avatar me-3">
+            <div>
+              <h4 class="h6 mb-0 text-white font-accent fw-bold">{{ review.name }}</h4>
+              <span class="text-muted small">{{ review.role }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

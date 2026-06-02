@@ -1,0 +1,141 @@
+<!-- Banner -->
+<section class="about-banner position-relative d-flex align-items-center justify-content-center overflow-hidden">
+  <div class="banner-bg position-absolute top-0 start-0 w-100 h-100"></div>
+  <div class="dark-overlay position-absolute top-0 start-0 w-100 h-100"></div>
+  <div class="container position-relative z-1 text-center py-5">
+    <h1 class="display-4 fw-bold text-white mb-2">Our Legacy</h1>
+    <p class="text-gold font-accent text-uppercase tracking-wide mb-0">The Story of FoodieHub Fine Dining</p>
+  </div>
+</section>
+
+<!-- Our Story Section -->
+<section class="section-padding bg-dark">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <!-- Story Text -->
+      <div class="col-lg-6 fade-in">
+        <span class="text-gold font-accent small text-uppercase fw-semibold tracking-wide">Est. 2011</span>
+        <h2 class="display-6 text-white fw-bold mb-4 font-serif">A Decade of Culinary Craftsmanship</h2>
+        <p class="text-secondary mb-3">
+          Founded in 2011 by a team of food enthusiasts, FoodieHub has evolved from a small rustic bistro into a sanctuary for fine dining lovers. Our commitment has always been simple: cook with passion, source only the finest local organic ingredients, and treat every guest like royalty.
+        </p>
+        <p class="text-secondary mb-4">
+          Every recipe on our menu is a fruit of meticulous tasting and cultural exploration. We take traditional classic recipes from Italian, Indian, French, and Asian cuisines, and infuse them with a modern fusion twist that keeps our patrons coming back.
+        </p>
+        <div class="d-flex gap-3">
+          <a routerLink="/menu" class="btn btn-gold font-accent">Explore Menu</a>
+          <a routerLink="/reserve" class="btn btn-outline-gold font-accent">Reserve A Table</a>
+        </div>
+      </div>
+      <!-- Story Image -->
+      <div class="col-lg-6 fade-in" style="animation-delay: 0.2s">
+        <div class="story-img-wrapper glass-card p-2 overflow-hidden position-relative">
+          <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=800" alt="Plated gourmet dinner" class="img-fluid rounded-3 story-img">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Mission & Vision Section -->
+<section class="section-padding bg-darker border-top border-bottom border-light">
+  <div class="container">
+    <div class="row g-4">
+      <!-- Mission Card -->
+      <div class="col-md-6">
+        <div class="mission-card glass-card p-5 h-100">
+          <div class="icon-circle mb-4">
+            <i class="fa-solid fa-compass text-gold"></i>
+          </div>
+          <h3 class="h4 text-white font-accent fw-bold mb-3">Our Mission</h3>
+          <p class="text-secondary mb-0">
+            To create an exceptional dining experience that stimulates all senses. We strive to provide high-quality culinary achievements using sustainable ingredients, accompanied by warm, friendly hospitality in an atmosphere of luxury and elegance.
+          </p>
+        </div>
+      </div>
+
+      <!-- Vision Card -->
+      <div class="col-md-6">
+        <div class="mission-card glass-card p-5 h-100">
+          <div class="icon-circle mb-4">
+            <i class="fa-solid fa-eye text-gold"></i>
+          </div>
+          <h3 class="h4 text-white font-accent fw-bold mb-3">Our Vision</h3>
+          <p class="text-secondary mb-0">
+            To establish FoodieHub as the premier globally recognized gourmet dining brand, leading the industry in food innovation, zero-waste sustainable kitchen practices, and setting the benchmark for premium guest hospitality.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Animated Statistics -->
+<section class="stats-section py-5 position-relative overflow-hidden">
+  <div class="container position-relative z-1">
+    <div class="row g-4">
+      <div class="col-lg-3 col-sm-6 text-center" *ngFor="let stat of stats">
+        <div class="stat-box p-4">
+          <h2 class="display-4 text-gold fw-bold font-accent mb-1">{{ stat.value }}</h2>
+          <span class="text-secondary small text-uppercase tracking-wider font-accent">{{ stat.label }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Chef Section -->
+<section class="section-padding bg-dark">
+  <div class="container">
+    <div class="section-title">
+      <span class="text-gold font-accent small text-uppercase fw-semibold tracking-wide">Culinary Visionaries</span>
+      <h2>Meet Our Master Chefs</h2>
+      <p>The exceptional minds and hands behind our legendary recipe creations.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6 fade-in" *ngFor="let chef of chefs; let i = index" [style.animation-delay]="(i * 0.2) + 's'">
+        <div class="chef-card glass-card overflow-hidden">
+          <div class="chef-img-wrapper position-relative">
+            <img [src]="chef.image" [alt]="chef.name" class="w-100 chef-img">
+            <div class="chef-socials position-absolute bottom-0 start-0 w-100 d-flex justify-content-center gap-3 p-3">
+              <a [href]="chef.socials.facebook" class="chef-social-link"><i class="fa-brands fa-facebook-f"></i></a>
+              <a [href]="chef.socials.twitter" class="chef-social-link"><i class="fa-brands fa-x-twitter"></i></a>
+              <a [href]="chef.socials.instagram" class="chef-social-link"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+          </div>
+          <div class="chef-info p-4 text-center">
+            <h3 class="h5 text-white fw-bold font-accent mb-1">{{ chef.name }}</h3>
+            <span class="text-gold small d-block mb-3">{{ chef.role }}</span>
+            <p class="text-secondary small mb-0">{{ chef.bio }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Restaurant Gallery -->
+<section class="section-padding bg-darker border-top border-light">
+  <div class="container">
+    <div class="section-title">
+      <span class="text-gold font-accent small text-uppercase fw-semibold tracking-wide">Visual Journey</span>
+      <h2>Restaurant Gallery</h2>
+      <p>Take a glimpse into the ambience and gourmet artistry of FoodieHub.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-3 col-md-6 fade-in" *ngFor="let item of gallery; let i = index" [style.animation-delay]="(i * 0.15) + 's'">
+        <div class="gallery-card glass-card overflow-hidden position-relative">
+          <div class="gallery-img-wrapper">
+            <img [src]="item.image" [alt]="item.title" class="w-100 gallery-img img-fluid">
+          </div>
+          <div class="gallery-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-end p-4 text-start">
+            <span class="badge bg-gold-outline align-self-start mb-2 small">{{ item.category }}</span>
+            <h3 class="h6 text-white fw-bold mb-0 font-accent">{{ item.title }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

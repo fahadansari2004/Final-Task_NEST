@@ -1,0 +1,91 @@
+:host {
+  display: block;
+  cursor: pointer;
+}
+
+/* Image Wrapper and Zoom Effect */
+.image-wrapper {
+  height: 220px;
+  overflow: hidden;
+  background-color: #121216;
+}
+
+.food-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.card:hover .food-image {
+  transform: scale(1.1) rotate(1deg);
+}
+
+/* Cuisine Badge Positioning & Style */
+.top-3 {
+  top: 1rem;
+}
+.start-3 {
+  left: 1rem;
+}
+
+.cuisine-badge .badge {
+  background: rgba(10, 10, 12, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-glass);
+  color: var(--color-gold);
+  font-weight: 500;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+}
+
+/* Card Title */
+.card-title {
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.card:hover .card-title {
+  color: var(--color-gold);
+}
+
+/* Border Light */
+.border-light {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Add to Cart Circular Button */
+.btn-cart-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(197, 168, 128, 0.1);
+  border: 1px solid var(--color-gold);
+  color: var(--color-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  outline: none;
+}
+
+.btn-cart-circle:hover {
+  background: var(--color-gold);
+  color: #000;
+  transform: scale(1.1) rotate(360deg);
+  box-shadow: 0 0 15px rgba(197, 168, 128, 0.4);
+}
+
+/* Text Truncation */
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,0 +1,110 @@
+/* Banner Header */
+.menu-banner {
+  height: 280px;
+  background-color: var(--bg-dark);
+}
+
+.banner-bg {
+  background-image: url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&q=80&w=1600');
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.4);
+}
+
+/* Category Filter Pills */
+.filter-pill {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--text-primary);
+  border-radius: 30px;
+  padding: 10px 24px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.filter-pill:hover {
+  background: rgba(197, 168, 128, 0.15);
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+  transform: translateY(-2px);
+}
+
+.active-pill {
+  background: linear-gradient(135deg, var(--color-gold) 0%, #b39268 100%) !important;
+  color: #000 !important;
+  border-color: transparent !important;
+  box-shadow: var(--shadow-glow);
+}
+
+/* Search Box Styling */
+.search-wrapper .search-icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+}
+
+.search-input {
+  height: 48px;
+  border-radius: 30px !important;
+}
+
+/* Scrollable category on small screens */
+@media (max-width: 767px) {
+  .category-scroll {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .filter-pill {
+    flex: 0 0 auto;
+  }
+}
+
+/* Empty State Card */
+.empty-state {
+  border-radius: 16px;
+  background: rgba(18, 18, 22, 0.65);
+  border: 1px dashed var(--border-glass);
+}
+
+/* Pagination Customizations */
+.custom-pagination .page-link {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-primary);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-family: var(--font-accent);
+  transition: all 0.3s ease;
+}
+
+.custom-pagination .page-link:hover {
+  background: rgba(197, 168, 128, 0.1);
+  color: var(--color-gold);
+  border-color: var(--color-gold);
+  transform: scale(1.05);
+}
+
+.custom-pagination .page-item.active .page-link {
+  background: var(--color-gold);
+  color: #000;
+  border-color: var(--color-gold);
+  box-shadow: var(--shadow-glow);
+}
+
+.custom-pagination .page-item.disabled .page-link {
+  background: rgba(255, 255, 255, 0.01);
+  border-color: rgba(255, 255, 255, 0.03);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}

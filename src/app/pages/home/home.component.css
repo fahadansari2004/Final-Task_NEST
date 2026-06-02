@@ -1,0 +1,189 @@
+/* Hero Section styling */
+.hero-section {
+  min-height: calc(100vh - 86px);
+  background-color: var(--bg-dark);
+}
+
+.hero-bg {
+  background-image: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=1600');
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.1) brightness(0.85);
+  transform: scale(1.02);
+  transition: transform 10s ease;
+}
+
+.dark-overlay {
+  background: linear-gradient(180deg, rgba(10, 10, 12, 0.7) 0%, rgba(10, 10, 12, 0.95) 100%);
+}
+
+.max-w-600 {
+  max-width: 600px;
+}
+
+.tracking-wide {
+  letter-spacing: 2px;
+}
+
+/* Floating Elements */
+.floating-item {
+  z-index: 2;
+  pointer-events: none;
+}
+
+.floating-item img {
+  width: 130px;
+  height: 130px;
+  object-fit: cover;
+  border: 4px solid var(--border-glass);
+  box-shadow: var(--shadow-lg);
+}
+
+.item-1 {
+  top: 20%;
+  left: 8%;
+}
+
+.item-2 {
+  bottom: 20%;
+  right: 8%;
+}
+
+/* Scroll reveal helper */
+.animate-up {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: animUp 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes animUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Carousel Section */
+.bg-darker {
+  background-color: #08080a;
+}
+
+.carousel-image-wrapper {
+  height: 550px;
+  overflow: hidden;
+}
+
+.carousel-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 6s ease;
+}
+
+.carousel:hover .carousel-img {
+  transform: scale(1.05);
+}
+
+.carousel-caption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 10, 12, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 3;
+}
+
+.slide-title {
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  transform: translateY(20px);
+  opacity: 0;
+  animation: slideTextUp 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) 0.3s forwards;
+}
+
+.slide-desc {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  transform: translateY(20px);
+  opacity: 0;
+  animation: slideTextUp 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) 0.5s forwards;
+}
+
+@keyframes slideTextUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.carousel-indicators [data-bs-target] {
+  background-color: var(--color-gold);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin: 0 6px;
+}
+
+/* Why Choose Us feature cards */
+.feature-card {
+  height: 100%;
+  border-radius: 16px;
+}
+
+.icon-box {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: rgba(197, 168, 128, 0.08);
+  border: 1px solid var(--border-glass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-size: 2rem;
+  transition: all 0.4s ease;
+}
+
+.feature-card:hover .icon-box {
+  background: var(--color-gold);
+  color: #000 !important;
+  transform: scale(1.1) rotate(10deg);
+  box-shadow: 0 0 20px rgba(197, 168, 128, 0.4);
+}
+
+.feature-card:hover .icon-box i {
+  color: #000 !important;
+}
+
+/* Testimonial Cards */
+.testimonial-card {
+  border-radius: 16px;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border: 2px solid var(--color-gold);
+}
+
+.font-italic {
+  font-style: italic;
+}
+
+/* Responsive adjust */
+@media (max-width: 768px) {
+  .hero-section h1 {
+    font-size: 2.2rem;
+  }
+  .carousel-image-wrapper {
+    height: 400px;
+  }
+  .slide-title {
+    font-size: 1.8rem !important;
+  }
+  .slide-desc {
+    font-size: 0.95rem !important;
+  }
+}

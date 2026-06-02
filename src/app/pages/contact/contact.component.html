@@ -1,0 +1,165 @@
+<!-- Banner -->
+<section class="contact-banner position-relative d-flex align-items-center justify-content-center overflow-hidden">
+  <div class="banner-bg position-absolute top-0 start-0 w-100 h-100"></div>
+  <div class="dark-overlay position-absolute top-0 start-0 w-100 h-100"></div>
+  <div class="container position-relative z-1 text-center py-5">
+    <h1 class="display-4 fw-bold text-white mb-2">Contact Us</h1>
+    <p class="text-gold font-accent text-uppercase tracking-wide mb-0">We would love to hear from you</p>
+  </div>
+</section>
+
+<!-- Content -->
+<section class="section-padding bg-dark">
+  <div class="container">
+    <div class="row g-5">
+      <!-- Left Column: Contact details -->
+      <div class="col-lg-5 fade-in">
+        <div class="d-flex flex-column gap-4">
+          <!-- Card 1: Location -->
+          <div class="info-card glass-card p-4 d-flex align-items-start gap-3">
+            <div class="icon-circle-contact">
+              <i class="fa-solid fa-map-location-dot text-gold"></i>
+            </div>
+            <div>
+              <h3 class="h5 text-white font-accent fw-bold mb-2">Our Location</h3>
+              <p class="text-secondary mb-0">123 Gourmet Boulevard, Suite 500<br>Food City, NY 10001</p>
+            </div>
+          </div>
+
+          <!-- Card 2: Contact -->
+          <div class="info-card glass-card p-4 d-flex align-items-start gap-3">
+            <div class="icon-circle-contact">
+              <i class="fa-solid fa-phone-volume text-gold"></i>
+            </div>
+            <div>
+              <h3 class="h5 text-white font-accent fw-bold mb-2">Phone & Email</h3>
+              <p class="text-secondary mb-1">Hotline: <a href="tel:+12345678900" class="text-decoration-none text-gold fw-medium">+1 234 567 8900</a></p>
+              <p class="text-secondary mb-0">Support: <a href="mailto:contact@foodiehub.com" class="text-decoration-none text-gold fw-medium">contact&#64;foodiehub.com</a></p>
+            </div>
+          </div>
+
+          <!-- Card 3: Hours -->
+          <div class="info-card glass-card p-4 d-flex align-items-start gap-3">
+            <div class="icon-circle-contact">
+              <i class="fa-solid fa-clock text-gold"></i>
+            </div>
+            <div>
+              <h3 class="h5 text-white font-accent fw-bold mb-2">Operating Hours</h3>
+              <p class="text-secondary mb-1">Mon - Fri: <span class="text-white">11:00 AM - 11:00 PM</span></p>
+              <p class="text-secondary mb-0">Sat - Sun: <span class="text-white">10:00 AM - 12:00 AM</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Contact form -->
+      <div class="col-lg-7 fade-in" style="animation-delay: 0.2s">
+        <div class="contact-form-wrapper glass-card p-5">
+          <h2 class="h3 text-white font-serif mb-4 fw-bold">Send Us A Message</h2>
+          
+          <!-- Success feedback -->
+          <div *ngIf="isSubmitted" class="alert alert-success-custom mb-4 fade-in" role="alert">
+            <i class="fa-solid fa-circle-check me-2 fs-5"></i>
+            <div>
+              <strong class="d-block text-white font-accent mb-1">Message Sent Successfully!</strong>
+              <span class="small">Thank you for writing to us. Our team will respond to your email within 24 hours.</span>
+            </div>
+          </div>
+
+          <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+            <div class="row g-3">
+              <!-- Name Input -->
+              <div class="col-md-6">
+                <label for="name" class="form-label text-muted small font-accent">Your Name</label>
+                <input 
+                  type="text" 
+                  id="name"
+                  class="form-control form-control-dark" 
+                  placeholder="Enter name"
+                  formControlName="name"
+                  [class.is-invalid]="contactForm.get('name')?.touched && contactForm.get('name')?.invalid">
+                <div class="invalid-feedback text-gold small mt-1" *ngIf="contactForm.get('name')?.touched && contactForm.get('name')?.invalid">
+                  Name is required (min 2 characters).
+                </div>
+              </div>
+
+              <!-- Email Input -->
+              <div class="col-md-6">
+                <label for="email" class="form-label text-muted small font-accent">Email Address</label>
+                <input 
+                  type="email" 
+                  id="email"
+                  class="form-control form-control-dark" 
+                  placeholder="Enter email"
+                  formControlName="email"
+                  [class.is-invalid]="contactForm.get('email')?.touched && contactForm.get('email')?.invalid">
+                <div class="invalid-feedback text-gold small mt-1" *ngIf="contactForm.get('email')?.touched && contactForm.get('email')?.invalid">
+                  A valid email address is required.
+                </div>
+              </div>
+
+              <!-- Subject Input -->
+              <div class="col-12">
+                <label for="subject" class="form-label text-muted small font-accent">Subject</label>
+                <input 
+                  type="text" 
+                  id="subject"
+                  class="form-control form-control-dark" 
+                  placeholder="Enter message subject"
+                  formControlName="subject"
+                  [class.is-invalid]="contactForm.get('subject')?.touched && contactForm.get('subject')?.invalid">
+                <div class="invalid-feedback text-gold small mt-1" *ngIf="contactForm.get('subject')?.touched && contactForm.get('subject')?.invalid">
+                  Subject is required (min 4 characters).
+                </div>
+              </div>
+
+              <!-- Message Input -->
+              <div class="col-12 mb-3">
+                <label for="message" class="form-label text-muted small font-accent">Your Message</label>
+                <textarea 
+                  id="message"
+                  rows="5" 
+                  class="form-control form-control-dark" 
+                  placeholder="Describe your inquiry..."
+                  formControlName="message"
+                  [class.is-invalid]="contactForm.get('message')?.touched && contactForm.get('message')?.invalid"></textarea>
+                <div class="invalid-feedback text-gold small mt-1" *ngIf="contactForm.get('message')?.touched && contactForm.get('message')?.invalid">
+                  Message is required (min 10 characters).
+                </div>
+              </div>
+
+              <!-- Submit button -->
+              <div class="col-12">
+                <button 
+                  type="submit" 
+                  class="btn btn-gold w-100 py-3 font-accent" 
+                  [disabled]="isSending">
+                  <span *ngIf="!isSending"><i class="fa-solid fa-paper-plane me-2"></i> Send Message</span>
+                  <span *ngIf="isSending"><i class="fa-solid fa-circle-notch fa-spin me-2"></i> Sending Message...</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map block -->
+    <div class="row mt-5 pt-4">
+      <div class="col-12 fade-in">
+        <div class="map-wrapper glass-card p-2 overflow-hidden">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.6175401931894!2d-73.98685832421712!3d40.74844047138914!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9b3117469%3A0xd134e199a405a163!2sEmpire%20State%20Building!5e0!3m2!1sen!2sus!4v1685202685987!5m2!1sen!2sus" 
+            width="100%" 
+            height="450" 
+            style="border:0; border-radius: 12px; filter: grayscale(1) invert(0.9) contrast(1.2);" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

@@ -1,0 +1,83 @@
+<footer class="footer-section">
+  <div class="container">
+    <div class="row g-5">
+      <!-- Col 1: Brand Info -->
+      <div class="col-lg-4 col-md-6">
+        <div class="footer-logo mb-3">
+          <a class="d-flex align-items-center text-decoration-none" routerLink="/">
+            <i class="fa-solid fa-fire-burner text-gold me-2 brand-icon"></i>
+            <span class="brand-text">Foodie<span class="text-gold">Hub</span></span>
+          </a>
+        </div>
+        <p class="text-secondary mb-4 pe-lg-4">
+          Experience gourmet culinary creations crafted by our world-class chefs. We bring premium dining and fresh ingredients to your table.
+        </p>
+        <div class="social-icons d-flex gap-3">
+          <a href="#" target="_blank" class="social-icon" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" target="_blank" class="social-icon" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" target="_blank" class="social-icon" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" target="_blank" class="social-icon" aria-label="Tripadvisor"><i class="fa-brands fa-tripadvisor"></i></a>
+        </div>
+      </div>
+
+      <!-- Col 2: Quick Links -->
+      <div class="col-lg-2 col-md-6">
+        <h3 class="footer-heading font-accent">Quick Links</h3>
+        <ul class="footer-links list-unstyled">
+          <li><a routerLink="/">Home</a></li>
+          <li><a routerLink="/menu">Our Menu</a></li>
+          <li><a routerLink="/about">About Us</a></li>
+          <li><a routerLink="/contact">Contact</a></li>
+          <li><a routerLink="/reservation">Book Table</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Opening Hours -->
+      <div class="col-lg-3 col-md-6">
+        <h3 class="footer-heading font-accent">Opening Hours</h3>
+        <ul class="footer-hours list-unstyled text-secondary">
+          <li class="d-flex justify-content-between mb-2">
+            <span>Monday - Friday</span>
+            <span class="text-gold fw-medium">11am - 11pm</span>
+          </li>
+          <li class="d-flex justify-content-between mb-2">
+            <span>Saturday</span>
+            <span class="text-gold fw-medium">10am - Midnight</span>
+          </li>
+          <li class="d-flex justify-content-between">
+            <span>Sunday</span>
+            <span class="text-gold fw-medium">10am - 10pm</span>
+          </li>
+        </ul>
+        <div class="footer-contact-item mt-4">
+          <span class="text-muted small d-block">Reservation Hotline</span>
+          <a href="tel:+12345678900" class="text-gold h5 text-decoration-none fw-bold font-accent">+1 234 567 8900</a>
+        </div>
+      </div>
+
+      <!-- Col 4: Newsletter -->
+      <div class="col-lg-3 col-md-6">
+        <h3 class="footer-heading font-accent">Newsletter</h3>
+        <p class="text-secondary mb-3">Subscribe to receive recipe highlights, discount events, and chef specials.</p>
+        
+        <form (submit)="subscribeNewsletter($event)" *ngIf="!isSubscribed" class="newsletter-form position-relative">
+          <input type="email" class="form-control form-control-dark pe-5" placeholder="Enter your email" [(ngModel)]="email" name="email" required>
+          <button type="submit" class="btn btn-send-news" aria-label="Subscribe">
+            <i class="fa-solid fa-paper-plane text-gold"></i>
+          </button>
+        </form>
+
+        <!-- Newsletter Success State -->
+        <div *ngIf="isSubscribed" class="newsletter-success text-center py-2 px-3 rounded glass-card border-gold border-1">
+          <i class="fa-solid fa-circle-check text-gold me-2"></i>
+          <span class="small font-accent text-white">Thank you for subscribing!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom mt-5 pt-4 border-top border-light text-center text-secondary small">
+      <p class="mb-0">&copy; 2026 FoodieHub Restaurant. All Rights Reserved. Crafted with passion.</p>
+    </div>
+  </div>
+</footer>

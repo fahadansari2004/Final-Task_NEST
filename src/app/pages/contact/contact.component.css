@@ -1,0 +1,73 @@
+/* Banner Styling */
+.contact-banner {
+  height: 280px;
+  background-color: var(--bg-dark);
+}
+
+.contact-banner .banner-bg {
+  background-image: url('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&q=80&w=1600');
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.4);
+}
+
+/* Info Details Card */
+.info-card {
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-4px);
+}
+
+.icon-circle-contact {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(197, 168, 128, 0.08);
+  border: 1px solid var(--border-glass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+/* Contact form and wrapper styles */
+.contact-form-wrapper {
+  border-radius: 16px;
+}
+
+/* Form labels custom spacing */
+.form-label {
+  margin-bottom: 6px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Alerts Custom */
+.alert-success-custom {
+  background: rgba(18, 18, 22, 0.95);
+  border: 1px solid #198754;
+  color: #198754;
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: start;
+}
+
+/* Invalid control styling */
+.form-control-dark.is-invalid {
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.15) !important;
+  background-image: none !important;
+}
+
+/* Map frame wrapping */
+.map-wrapper {
+  border-radius: 16px;
+}
+.map-wrapper iframe {
+  display: block;
+}

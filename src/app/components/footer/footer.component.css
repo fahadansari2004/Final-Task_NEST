@@ -1,0 +1,132 @@
+/* Footer Section Styling */
+.footer-section {
+  background-color: #08080a;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 80px 0 40px;
+}
+
+/* Typography & Brand */
+.brand-text {
+  font-family: var(--font-accent);
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+  color: var(--text-primary);
+}
+
+.brand-icon {
+  font-size: 1.6rem;
+}
+
+.footer-heading {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 25px;
+  position: relative;
+}
+
+.footer-heading::after {
+  content: '';
+  display: block;
+  width: 35px;
+  height: 2px;
+  background: var(--color-gold);
+  margin-top: 10px;
+}
+
+/* Social Icons */
+.social-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.social-icon:hover {
+  background: var(--color-gold);
+  color: #000;
+  transform: translateY(-4px);
+  box-shadow: 0 4px 15px rgba(197, 168, 128, 0.3);
+}
+
+/* Footer links list */
+.footer-links li {
+  margin-bottom: 12px;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  display: inline-block;
+}
+
+.footer-links a:hover {
+  color: var(--color-gold);
+  transform: translateX(5px);
+}
+
+/* Footer operating hours */
+.footer-hours li {
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+  padding-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.footer-hours li:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* Newsletter Input Form */
+.newsletter-form {
+  display: flex;
+  align-items: center;
+}
+
+.newsletter-form .form-control-dark {
+  border-radius: 30px;
+  height: 50px;
+  font-size: 0.9rem;
+}
+
+.btn-send-news {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  bottom: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(197, 168, 128, 0.1);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.btn-send-news:hover {
+  background: var(--color-gold);
+}
+
+.btn-send-news:hover i {
+  color: #000 !important;
+}
+
+.border-light {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.newsletter-success {
+  border: 1px solid var(--color-gold);
+}
