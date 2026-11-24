@@ -89,3 +89,50 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Availability & Sold Out Overlay Styles */
+.card-unavailable {
+  border-color: rgba(231, 76, 60, 0.25) !important;
+}
+
+.card-unavailable .food-image {
+  filter: grayscale(45%) contrast(85%);
+  opacity: 0.82;
+}
+
+.sold-out-overlay {
+  background: rgba(10, 10, 12, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.sold-out-stamp {
+  background: rgba(220, 53, 69, 0.9);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.btn-disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.animate-pulse {
+  animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.85; }
+  100% { transform: scale(1); opacity: 1; }
+}

@@ -1,0 +1,1212 @@
+<div class="admin-layout section-padding min-vh-100">
+  <div class="container-fluid px-lg-5">
+
+    <!-- Top Admin Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 p-3 rounded-4 glass-panel border border-gold border-opacity-25 shadow-lg">
+      <div class="d-flex align-items-center gap-3">
+        <div class="admin-badge-icon rounded-circle d-flex align-items-center justify-content-center">
+          <i class="fa-solid fa-crown text-gold fs-4"></i>
+        </div>
+        <div>
+          <div class="d-flex align-items-center gap-2">
+            <h1 class="h4 mb-0 fw-bold font-accent text-white">Restaurant Executive Admin</h1>
+            <span class="badge bg-gold text-dark font-accent px-2 py-1">Master Control</span>
+          </div>
+          <p class="text-secondary small mb-0">Food menu catalog, dish creator, operational metrics & supervision</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <!-- Add Food Item Primary CTA -->
+        <button 
+          type="button" 
+          class="btn btn-gold rounded-pill px-4 py-2 font-accent fw-bold d-flex align-items-center gap-2 shadow"
+          (click)="openAddFoodModal()">
+          <i class="fa-solid fa-plus-circle"></i> Add Food Item
+        </button>
+
+        <!-- Jump to Manager Order Reception -->
+        <a 
+          routerLink="/manager" 
+          class="btn btn-outline-warning rounded-pill px-3 py-2 font-accent small d-flex align-items-center gap-2">
+          <i class="fa-solid fa-bell-concierge"></i> Kitchen & Orders Desk
+        </a>
+
+        <!-- Sign Out -->
+        <button 
+          type="button" 
+          class="btn btn-outline-danger rounded-pill px-3 py-2 font-accent small"
+          (click)="signOut()">
+          <i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Exit
+        </button>
+      </div>
+    </div>
+
+    <!-- Admin Metric Highlight Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-xl-3 col-md-6">
+        <div class="glass-card p-3 rounded-4 border-gold border-opacity-25">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="text-secondary small font-accent text-uppercase">Total Food Dishes</span>
+            <i class="fa-solid fa-bowl-food text-gold fs-5"></i>
+          </div>
+          <div class="h2 fw-bold text-white font-accent mb-0">{{ recipes.length }}</div>
+          <div class="small text-gold mt-1"><i class="fa-solid fa-check me-1"></i>Live in restaurant menu</div>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-md-6">
+        <div class="glass-card p-3 rounded-4 border-info border-opacity-25">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="text-secondary small font-accent text-uppercase">Total Customer Orders</span>
+            <i class="fa-solid fa-receipt text-info fs-5"></i>
+          </div>
+          <div class="h2 fw-bold text-info font-accent mb-0">{{ orders.length }}</div>
+          <div class="small text-secondary mt-1">{{ getPendingOrdersCount() }} currently in preparation</div>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-md-6">
+        <div class="glass-card p-3 rounded-4 border-success border-opacity-25">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="text-secondary small font-accent text-uppercase">Gross Sales Volume</span>
+            <i class="fa-solid fa-coins text-success fs-5"></i>
+          </div>
+          <div class="h2 fw-bold text-success font-accent mb-0">${{ getTotalRevenue().toFixed(2) }}</div>
+          <div class="small text-secondary mt-1">Avg. Ticket: ${{ getAverageOrderValue().toFixed(2) }}</div>
+        </div>
+      </div>
+
+      <div class="col-xl-3 col-md-6">
+        <div class="glass-card p-3 rounded-4 border-warning border-opacity-25">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="text-secondary small font-accent text-uppercase">Table Reservations</span>
+            <i class="fa-solid fa-calendar-check text-warning fs-5"></i>
+          </div>
+          <div class="h2 fw-bold text-warning font-accent mb-0">{{ reservations.length }}</div>
+          <div class="small text-secondary mt-1">Dine-in booking records</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Navigation Tabs -->
+    <div class="nav-tabs-wrapper d-flex flex-wrap p-1 rounded-pill bg-dark border border-secondary border-opacity-25 mb-4">
+      <button 
+        type="button" 
+        class="admin-tab-btn rounded-pill px-4 py-2 border-0 small fw-semibold font-accent"
+        [class.active]="activeTab === 'menu'"
+        (click)="activeTab = 'menu'">
+        <i class="fa-solid fa-utensils me-2 text-gold"></i> Food Menu & Dishes ({{ recipes.length }})
+      </button>
+
+      <button 
+        type="button" 
+        class="admin-tab-btn rounded-pill px-4 py-2 border-0 small fw-semibold font-accent"
+        [class.active]="activeTab === 'orders'"
+        (click)="activeTab = 'orders'">
+        <i class="fa-solid fa-bag-shopping me-2 text-gold"></i> All Orders ({{ orders.length }})
+      </button>
+
+      <button 
+        type="button" 
+        class="admin-tab-btn rounded-pill px-4 py-2 border-0 small fw-semibold font-accent"
+        [class.active]="activeTab === 'reservations'"
+        (click)="activeTab = 'reservations'">
+        <i class="fa-solid fa-calendar-days me-2 text-gold"></i> Reservations ({{ reservations.length }})
+      </button>
+
+      <button 
+        type="button" 
+        class="admin-tab-btn rounded-pill px-4 py-2 border-0 small fw-semibold font-accent"
+        [class.active]="activeTab === 'analytics'"
+        (click)="activeTab = 'analytics'">
+        <i class="fa-solid fa-chart-pie me-2 text-gold"></i> Performance Analytics
+      </button>
+
+      <button 
+        type="button" 
+        class="admin-tab-btn rounded-pill px-4 py-2 border-0 small fw-semibold font-accent position-relative d-inline-flex align-items-center"
+        [class.active]="activeTab === 'managers' || activeTab === 'staff'"
+        (click)="activeTab = 'managers'">
+        <i class="fa-solid fa-user-shield me-2 text-gold"></i> Manager Approvals & Staff ({{ managers.length }})
+        <span *ngIf="getPendingManagersCount() > 0" class="badge bg-warning text-dark ms-2 font-accent py-1 px-2 rounded-pill">
+          {{ getPendingManagersCount() }} Pending
+        </span>
+      </button>
+    </div>
+
+    <!-- 1. FOOD MENU MANAGEMENT TAB -->
+    <div *ngIf="activeTab === 'menu'">
+      
+      <!-- Search & Filters Toolbar -->
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        
+        <!-- Kitchen Availability Filter Row -->
+        <div class="d-flex flex-wrap align-items-center gap-2 w-100 pb-2 border-bottom border-secondary border-opacity-25">
+          <span class="small text-muted font-accent me-1"><i class="fa-solid fa-utensils text-gold me-1"></i> Kitchen Stock Status:</span>
+          <button 
+            type="button" 
+            class="btn btn-sm rounded-pill font-accent px-3 py-1"
+            [ngClass]="foodAvailabilityFilter === 'all' ? 'btn-gold' : 'btn-dark border border-secondary border-opacity-25 text-secondary'"
+            (click)="setAvailabilityFilter('all')">
+            All Dishes ({{ recipes.length }})
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-sm rounded-pill font-accent px-3 py-1 d-inline-flex align-items-center gap-1"
+            [ngClass]="foodAvailabilityFilter === 'available' ? 'btn-success text-white fw-bold' : 'btn-dark border border-secondary border-opacity-25 text-success'"
+            (click)="setAvailabilityFilter('available')">
+            <i class="fa-solid fa-circle-check"></i>
+            In Stock / Available ({{ getAvailableDishesCount() }})
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-sm rounded-pill font-accent px-3 py-1 d-inline-flex align-items-center gap-1"
+            [ngClass]="foodAvailabilityFilter === 'unavailable' ? 'btn-danger text-white fw-bold' : 'btn-dark border border-secondary border-opacity-25 text-danger'"
+            (click)="setAvailabilityFilter('unavailable')">
+            <i class="fa-solid fa-ban"></i>
+            Sold Out / Unavailable ({{ getUnavailableDishesCount() }})
+          </button>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="d-flex flex-wrap gap-2">
+          <button 
+            *ngFor="let cat of categories" 
+            type="button" 
+            class="btn btn-sm rounded-pill font-accent"
+            [ngClass]="selectedCategory === cat ? 'btn-gold' : 'btn-outline-secondary'"
+            (click)="onCategorySelect(cat)">
+            {{ cat }}
+          </button>
+        </div>
+
+        <!-- Search Bar & Add Button -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="position-relative" style="min-width: 250px;">
+            <i class="fa-solid fa-magnifying-glass position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+            <input 
+              type="text" 
+              class="form-control form-control-dark ps-5 pe-3 rounded-pill small" 
+              [(ngModel)]="searchFoodQuery"
+              (ngModelChange)="onFoodSearch()"
+              placeholder="Search dishes by name, cuisine...">
+          </div>
+
+          <button 
+            type="button" 
+            class="btn btn-sm btn-gold rounded-pill px-3 py-2 font-accent text-nowrap"
+            (click)="openAddFoodModal()">
+            <i class="fa-solid fa-plus me-1"></i> Add Dish
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoadingFood" class="spinner-container">
+        <div class="gold-spinner"></div>
+      </div>
+
+      <!-- Food Items Table -->
+      <div *ngIf="!isLoadingFood" class="glass-panel rounded-4 p-3 p-md-4 shadow-lg overflow-hidden">
+        <div class="table-responsive">
+          <table class="table table-dark table-hover align-middle mb-0 custom-admin-table">
+            <thead>
+              <tr class="text-secondary small font-accent text-uppercase">
+                <th>Dish</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Cuisine</th>
+                <th>Prep / Cook</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let recipe of filteredRecipes">
+                <!-- Dish info -->
+                <td>
+                  <div class="d-flex align-items-center gap-3">
+                    <img 
+                      [src]="recipe.image" 
+                      [alt]="recipe.name" 
+                      class="dish-thumb rounded-3 object-fit-cover border border-light"
+                      onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=200'">
+                    <div>
+                      <div class="fw-bold text-white fs-6">{{ recipe.name }}</div>
+                      <div class="text-muted small">
+                        <span *ngIf="recipe.is_featured" class="badge bg-gold-subtle text-gold me-1">Featured</span>
+                        ID: #{{ recipe.id }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Category -->
+                <td>
+                  <span class="badge rounded-pill bg-dark border border-secondary text-light font-accent">
+                    {{ recipe.category }}
+                  </span>
+                </td>
+
+                <!-- Price -->
+                <td>
+                  <span class="text-gold fw-bold font-accent fs-6">
+                    ${{ recipe.price.toFixed(2) }}
+                  </span>
+                </td>
+
+                <!-- Cuisine -->
+                <td>
+                  <span class="small text-secondary">{{ recipe.cuisine || 'International' }}</span>
+                </td>
+
+                <!-- Prep / Cook -->
+                <td>
+                  <span class="small text-muted font-accent">
+                    <i class="fa-regular fa-clock me-1"></i>{{ recipe.prepTimeMinutes + recipe.cookTimeMinutes }} mins
+                  </span>
+                </td>
+
+                <!-- Rating -->
+                <td>
+                  <span class="small text-warning font-accent">
+                    <i class="fa-solid fa-star me-1"></i>{{ recipe.rating }}
+                  </span>
+                </td>
+
+                <!-- Status toggle -->
+                <td>
+                  <button 
+                    type="button" 
+                    class="btn btn-sm rounded-pill font-accent small d-inline-flex align-items-center gap-1 shadow-sm"
+                    [ngClass]="recipe.is_available !== false ? 'btn-outline-success border-success' : 'btn-outline-danger border-danger'"
+                    (click)="toggleAvailability(recipe)"
+                    [title]="recipe.is_available !== false ? 'Click to mark as Sold Out' : 'Click to mark as Available'">
+                    <i class="fa-solid" [ngClass]="recipe.is_available !== false ? 'fa-circle-check text-success' : 'fa-ban text-danger'"></i>
+                    <span>{{ recipe.is_available !== false ? 'In Stock (Live)' : 'Sold Out' }}</span>
+                  </button>
+                </td>
+
+                <!-- Actions -->
+                <td class="text-end">
+                  <div class="btn-group btn-group-sm">
+                    <button 
+                      type="button" 
+                      class="btn btn-outline-gold" 
+                      (click)="openEditFoodModal(recipe)"
+                      title="Edit Food Item">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-outline-danger" 
+                      (click)="openDeleteModal(recipe)"
+                      title="Delete Food Item">
+                      <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="filteredRecipes.length === 0" class="text-center py-5 text-secondary">
+          <i class="fa-solid fa-utensils fs-3 mb-2 d-block text-muted"></i>
+          No food dishes found matching your filter.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 2. ALL ORDERS TAB -->
+    <div *ngIf="activeTab === 'orders'">
+      <div class="glass-panel rounded-4 p-4 shadow-lg">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="h5 text-white font-accent mb-0">Customer Orders Master Registry</h2>
+          <a routerLink="/manager" class="btn btn-sm btn-outline-warning rounded-pill">
+            <i class="fa-solid fa-desktop me-1"></i> Open Kitchen Dispatch Desk
+          </a>
+        </div>
+
+        <div *ngIf="orderActionSuccess" class="alert alert-success d-flex align-items-center gap-2 py-2 px-3 mb-3 rounded-3 font-accent">
+          <i class="fa-solid fa-circle-check text-success"></i>
+          <span>{{ orderActionSuccess }}</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-dark table-hover align-middle mb-0 custom-admin-table">
+            <thead>
+              <tr class="text-secondary small font-accent text-uppercase">
+                <th>Order Ref</th>
+                <th>Customer</th>
+                <th>Total</th>
+                <th>Items Count</th>
+                <th>Order Date</th>
+                <th>Status</th>
+                <th>Change Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ord of orders">
+                <td>
+                  <span class="badge bg-gold text-dark font-accent fw-bold">{{ ord.order_ref }}</span>
+                </td>
+                <td>
+                  <div class="fw-bold text-white">{{ ord.customer_name }}</div>
+                  <div class="small text-muted">{{ ord.customer_phone }}</div>
+                </td>
+                <td>
+                  <span class="text-gold fw-bold font-accent">${{ Number(ord.total_amount).toFixed(2) }}</span>
+                </td>
+                <td>
+                  <span class="badge bg-dark border border-secondary text-light font-accent">
+                    {{ ord.order_items?.length || 0 }} items
+                  </span>
+                </td>
+                <td>
+                  <span class="small text-muted">{{ ord.created_at | date:'medium' }}</span>
+                </td>
+                <td>
+                  <span class="badge rounded-pill font-accent" [ngClass]="{
+                    'bg-warning text-dark': ord.status === 'Confirmed',
+                    'bg-info text-dark': ord.status === 'Preparing',
+                    'bg-primary text-white': ord.status === 'Out for Delivery',
+                    'bg-success text-white': ord.status === 'Delivered',
+                    'bg-danger text-white': ord.status === 'Cancelled'
+                  }">
+                    {{ ord.status }}
+                  </span>
+                </td>
+                <td>
+                  <select 
+                    class="form-select form-select-sm bg-dark text-white border-secondary font-accent py-1"
+                    style="min-width: 140px;"
+                    [value]="ord.status" 
+                    (change)="onAdminUpdateOrderStatus(ord, $any($event.target).value)">
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Preparing">Preparing</option>
+                    <option value="Out for Delivery">Out for Delivery</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. RESERVATIONS TAB -->
+    <div *ngIf="activeTab === 'reservations'">
+      <div class="glass-panel rounded-4 p-4 shadow-lg">
+        <h2 class="h5 text-white font-accent mb-4">Table Reservations Log</h2>
+        <div class="table-responsive">
+          <table class="table table-dark table-hover align-middle mb-0 custom-admin-table">
+            <thead>
+              <tr class="text-secondary small font-accent text-uppercase">
+                <th>Booking Code</th>
+                <th>Guest Name</th>
+                <th>Contact</th>
+                <th>Date / Time</th>
+                <th>Party</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let res of reservations">
+                <td><span class="badge bg-gold text-dark font-accent fw-bold">{{ res.booking_code }}</span></td>
+                <td class="text-white fw-bold">{{ res.name }}</td>
+                <td class="small text-secondary">{{ res.phone }}</td>
+                <td>{{ res.reservation_date }} at {{ res.reservation_time }}</td>
+                <td>{{ res.guests }} Guests</td>
+                <td><span class="badge bg-success font-accent">{{ res.status }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. ANALYTICS TAB -->
+    <div *ngIf="activeTab === 'analytics'">
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="glass-panel rounded-4 p-4 h-100">
+            <h2 class="h5 text-white font-accent mb-3">Revenue & Order Metrics</h2>
+            <div class="d-flex justify-content-between py-3 border-bottom border-light">
+              <span class="text-secondary">Total Gross Sales</span>
+              <span class="text-gold fw-bold font-accent fs-5">${{ getTotalRevenue().toFixed(2) }}</span>
+            </div>
+            <div class="d-flex justify-content-between py-3 border-bottom border-light">
+              <span class="text-secondary">Total Orders Received</span>
+              <span class="text-white fw-bold font-accent fs-5">{{ orders.length }}</span>
+            </div>
+            <div class="d-flex justify-content-between py-3 border-bottom border-light">
+              <span class="text-secondary">Delivered / Completed Orders</span>
+              <span class="text-success fw-bold font-accent fs-5">{{ getDeliveredCount() }}</span>
+            </div>
+            <div class="d-flex justify-content-between py-3 border-bottom border-light">
+              <span class="text-secondary">Average Order Value (AOV)</span>
+              <span class="text-gold fw-bold font-accent fs-5">${{ getAverageOrderValue().toFixed(2) }}</span>
+            </div>
+            <div class="d-flex justify-content-between py-3">
+              <span class="text-secondary">Active Menu Recipes</span>
+              <span class="text-info fw-bold font-accent fs-5">{{ recipes.length }} items</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="glass-panel rounded-4 p-4 h-100">
+            <h2 class="h5 text-white font-accent mb-3">Menu Category Overview</h2>
+            <div class="row g-3">
+              <div class="col-6" *ngFor="let cat of categories.slice(1)">
+                <div class="p-3 rounded-3 bg-dark bg-opacity-50 border border-light">
+                  <div class="text-secondary small font-accent text-uppercase">{{ cat }}</div>
+                  <div class="h4 fw-bold text-gold font-accent mb-0">
+                    {{ getCategoryCount(cat) }} items
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. MANAGERS APPROVALS & STAFF WORKFLOW TAB -->
+    <div *ngIf="activeTab === 'managers' || activeTab === 'staff'">
+      
+      <!-- Manager Action Toast Notification -->
+      <div *ngIf="managerToastMessage" class="alert py-3 px-4 rounded-3 mb-4 d-flex align-items-center justify-content-between shadow-lg"
+           [ngClass]="managerToastType === 'success' ? 'alert-success bg-success bg-opacity-25 text-white border-success' : (managerToastType === 'warning' ? 'alert-warning bg-warning bg-opacity-25 text-white border-warning' : 'alert-danger bg-danger bg-opacity-25 text-white border-danger')">
+        <div class="d-flex align-items-center gap-2">
+          <i class="fa-solid fs-5" [ngClass]="managerToastType === 'success' ? 'fa-circle-check text-success' : (managerToastType === 'warning' ? 'fa-triangle-exclamation text-warning' : 'fa-circle-xmark text-danger')"></i>
+          <span class="fw-medium font-accent">{{ managerToastMessage }}</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white" (click)="managerToastMessage = ''"></button>
+      </div>
+
+      <!-- KPI Summary Cards for Manager Workflow -->
+      <div class="row g-3 mb-4">
+        
+        <!-- Pending Applications Card -->
+        <div class="col-xl-3 col-md-6">
+          <div class="glass-card p-3 rounded-4 border-warning border-opacity-50 position-relative overflow-hidden">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="text-secondary small font-accent text-uppercase">Pending Approvals</span>
+              <span class="badge font-accent" [ngClass]="getPendingManagersCount() > 0 ? 'bg-warning text-dark' : 'bg-dark text-muted'">
+                {{ getPendingManagersCount() > 0 ? 'Action Required' : 'All Clear' }}
+              </span>
+            </div>
+            <div class="d-flex align-items-baseline gap-2">
+              <div class="h2 fw-bold font-accent mb-0" [ngClass]="getPendingManagersCount() > 0 ? 'text-warning' : 'text-white'">
+                {{ getPendingManagersCount() }}
+              </div>
+              <span class="text-secondary small">applications</span>
+            </div>
+            <div class="small text-secondary mt-1">
+              <i class="fa-solid fa-clock text-warning me-1"></i> Cannot log in until approved
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Approved Managers Card -->
+        <div class="col-xl-3 col-md-6">
+          <div class="glass-card p-3 rounded-4 border-success border-opacity-50">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="text-secondary small font-accent text-uppercase">Approved Managers</span>
+              <span class="badge bg-success bg-opacity-25 text-success border border-success font-accent">Active Staff</span>
+            </div>
+            <div class="d-flex align-items-baseline gap-2">
+              <div class="h2 fw-bold text-success font-accent mb-0">
+                {{ getApprovedManagersCount() }}
+              </div>
+              <span class="text-secondary small">authorized</span>
+            </div>
+            <div class="small text-secondary mt-1">
+              <i class="fa-solid fa-check text-success me-1"></i> Kitchen & order desk enabled
+            </div>
+          </div>
+        </div>
+
+        <!-- Suspended / Restricted Card -->
+        <div class="col-xl-3 col-md-6">
+          <div class="glass-card p-3 rounded-4 border-secondary border-opacity-25">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="text-secondary small font-accent text-uppercase">Suspended Accounts</span>
+              <span class="badge bg-secondary font-accent">Restricted</span>
+            </div>
+            <div class="d-flex align-items-baseline gap-2">
+              <div class="h2 fw-bold text-secondary font-accent mb-0">
+                {{ getSuspendedManagersCount() }}
+              </div>
+              <span class="text-secondary small">blocked</span>
+            </div>
+            <div class="small text-secondary mt-1">
+              <i class="fa-solid fa-ban text-danger me-1"></i> Access denied
+            </div>
+          </div>
+        </div>
+
+        <!-- Master Administrator Security Card -->
+        <div class="col-xl-3 col-md-6">
+          <div class="glass-card p-3 rounded-4 border-gold border-opacity-50">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <span class="text-gold small font-accent text-uppercase fw-bold">Master Administrator</span>
+              <i class="fa-solid fa-crown text-gold"></i>
+            </div>
+            <div class="fw-bold text-white font-accent fs-6 text-truncate mb-1">
+              admin&#64;foodiehub.com
+            </div>
+            <div class="small text-gold">
+              <i class="fa-solid fa-lock text-gold me-1"></i> Strict Single Admin System
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Main Manager Approval Registry Panel -->
+      <div class="glass-panel rounded-4 p-4 mb-4">
+        
+        <!-- Header & Action Toolbar -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-3 border-bottom border-light mb-4">
+          <div>
+            <h2 class="h5 text-white font-accent fw-bold mb-1 d-flex align-items-center gap-2">
+              <i class="fa-solid fa-users-gear text-gold"></i>
+              Restaurant Managers & Approval Queue
+            </h2>
+            <p class="text-secondary small mb-0">
+              Review incoming manager applications. Approving an account grants immediate access to the Kitchen & Order Desk.
+            </p>
+          </div>
+
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <button 
+              type="button" 
+              class="btn btn-gold btn-sm rounded-pill px-3 py-2 font-accent fw-bold d-flex align-items-center gap-2 shadow"
+              (click)="showDirectAddManagerModal = true">
+              <i class="fa-solid fa-user-plus"></i>
+              <span>+ Onboard Pre-Approved Manager</span>
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2 font-accent"
+              [disabled]="isLoadingManagers"
+              (click)="loadManagers()">
+              <i class="fa-solid fa-rotate" [class.fa-spin]="isLoadingManagers"></i>
+              <span>Refresh</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Pills & Search Bar -->
+        <div class="row g-3 align-items-center mb-4">
+          <div class="col-lg-6 col-md-7">
+            <div class="d-flex flex-wrap gap-2">
+              <button 
+                type="button" 
+                class="btn btn-sm rounded-pill font-accent px-3"
+                [ngClass]="managerFilterStatus === 'all' ? 'btn-gold' : 'btn-dark border border-secondary border-opacity-25 text-secondary'"
+                (click)="managerFilterStatus = 'all'">
+                All Managers ({{ managers.length }})
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm rounded-pill font-accent px-3 d-flex align-items-center gap-1"
+                [ngClass]="managerFilterStatus === 'pending' ? 'btn-warning text-dark fw-bold' : 'btn-dark border border-secondary border-opacity-25 text-warning'"
+                (click)="managerFilterStatus = 'pending'">
+                <i class="fa-solid fa-clock"></i>
+                Pending ({{ getPendingManagersCount() }})
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm rounded-pill font-accent px-3 d-flex align-items-center gap-1"
+                [ngClass]="managerFilterStatus === 'approved' ? 'btn-success text-white fw-bold' : 'btn-dark border border-secondary border-opacity-25 text-success'"
+                (click)="managerFilterStatus = 'approved'">
+                <i class="fa-solid fa-check"></i>
+                Approved ({{ getApprovedManagersCount() }})
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm rounded-pill font-accent px-3 d-flex align-items-center gap-1"
+                [ngClass]="managerFilterStatus === 'suspended' ? 'btn-danger text-white fw-bold' : 'btn-dark border border-secondary border-opacity-25 text-secondary'"
+                (click)="managerFilterStatus = 'suspended'">
+                <i class="fa-solid fa-ban"></i>
+                Suspended ({{ getSuspendedManagersCount() }})
+              </button>
+            </div>
+          </div>
+
+          <div class="col-lg-6 col-md-5">
+            <div class="input-group input-group-sm">
+              <span class="input-group-text bg-dark border-secondary border-opacity-25 text-secondary">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </span>
+              <input 
+                type="text" 
+                class="form-control form-control-dark border-secondary border-opacity-25" 
+                [(ngModel)]="managerSearchQuery" 
+                placeholder="Search by manager name, email, branch or phone...">
+              <button 
+                *ngIf="managerSearchQuery" 
+                type="button" 
+                class="btn btn-dark border-secondary border-opacity-25 text-secondary" 
+                (click)="managerSearchQuery = ''">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Managers Table -->
+        <div class="table-responsive">
+          <table class="table table-dark table-hover align-middle mb-0 custom-admin-table">
+            <thead>
+              <tr class="text-secondary small font-accent text-uppercase border-bottom border-secondary border-opacity-25">
+                <th scope="col" style="min-width: 200px;">Manager & Contact</th>
+                <th scope="col" style="min-width: 150px;">Branch / Location</th>
+                <th scope="col" style="min-width: 140px;">Registered</th>
+                <th scope="col" style="min-width: 140px;">Status</th>
+                <th scope="col" class="text-end" style="min-width: 180px;">Admin Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+              <!-- Empty State -->
+              <tr *ngIf="getFilteredManagers().length === 0">
+                <td colspan="5" class="text-center py-5">
+                  <div class="d-inline-flex p-3 rounded-circle bg-dark border border-secondary border-opacity-25 text-muted mb-3">
+                    <i class="fa-solid fa-user-slash fs-3"></i>
+                  </div>
+                  <div class="fw-bold text-white font-accent">No managers found</div>
+                  <div class="text-secondary small mt-1">
+                    {{ managerSearchQuery ? 'No managers match your search criteria.' : 'No manager records currently match this filter tab.' }}
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Manager Rows -->
+              <tr *ngFor="let m of getFilteredManagers()" [class.table-warning-bg]="m.status === 'pending'">
+                
+                <!-- Manager Info & Email -->
+                <td>
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="manager-avatar rounded-circle d-flex align-items-center justify-content-center fw-bold font-accent shadow-sm"
+                         [ngClass]="m.status === 'approved' ? 'avatar-approved' : (m.status === 'pending' ? 'avatar-pending' : 'avatar-suspended')">
+                      {{ (m.fullName.charAt(0) || 'M').toUpperCase() }}
+                    </div>
+                    <div>
+                      <div class="fw-bold text-white font-accent d-flex align-items-center gap-2">
+                        <span>{{ m.fullName }}</span>
+                        <span *ngIf="m.status === 'pending'" class="badge bg-warning text-dark small" style="font-size: 0.65rem;">NEW APPLICANT</span>
+                      </div>
+                      <div class="small text-secondary font-monospace">{{ m.email }}</div>
+                      <div *ngIf="m.phone" class="small text-muted">
+                        <i class="fa-solid fa-phone me-1 small"></i>{{ m.phone }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Branch / Kitchen Location -->
+                <td>
+                  <div class="d-flex align-items-center gap-2 text-light font-accent">
+                    <i class="fa-solid fa-location-dot text-gold"></i>
+                    <span>{{ m.branch || 'Main Flagship Kitchen' }}</span>
+                  </div>
+                </td>
+
+                <!-- Applied Date -->
+                <td>
+                  <div class="small text-light">{{ m.created_at | date:'mediumDate' }}</div>
+                  <div class="small text-muted">{{ m.created_at | date:'shortTime' }}</div>
+                  <div *ngIf="m.approved_at" class="small text-success mt-1" style="font-size: 0.72rem;">
+                    <i class="fa-solid fa-circle-check me-1"></i>Approved {{ m.approved_at | date:'shortDate' }}
+                  </div>
+                </td>
+
+                <!-- Status Badge -->
+                <td>
+                  <span *ngIf="m.status === 'pending'" class="badge bg-warning bg-opacity-20 text-warning border border-warning px-3 py-2 font-accent d-inline-flex align-items-center gap-1 rounded-pill">
+                    <i class="fa-solid fa-clock"></i> Pending Approval
+                  </span>
+
+                  <span *ngIf="m.status === 'approved'" class="badge bg-success bg-opacity-20 text-success border border-success px-3 py-2 font-accent d-inline-flex align-items-center gap-1 rounded-pill">
+                    <i class="fa-solid fa-check"></i> Approved
+                  </span>
+
+                  <span *ngIf="m.status === 'suspended' || m.status === 'rejected'" class="badge bg-danger bg-opacity-20 text-danger border border-danger px-3 py-2 font-accent d-inline-flex align-items-center gap-1 rounded-pill">
+                    <i class="fa-solid fa-ban"></i> Suspended
+                  </span>
+                </td>
+
+                <!-- Action Buttons -->
+                <td class="text-end">
+                  
+                  <!-- If Pending: Show Approve & Reject -->
+                  <div *ngIf="m.status === 'pending'" class="d-flex justify-content-end gap-2">
+                    <button 
+                      type="button" 
+                      class="btn btn-sm btn-gold font-accent fw-bold px-3 py-1 shadow-sm d-flex align-items-center gap-1"
+                      title="Approve manager application and grant login access"
+                      (click)="approveManager(m)">
+                      <i class="fa-solid fa-check"></i>
+                      <span>Approve</span>
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm btn-outline-danger font-accent px-2 py-1"
+                      title="Deny this manager application"
+                      (click)="rejectManager(m)">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
+
+                  <!-- If Approved: Show Suspend & Delete -->
+                  <div *ngIf="m.status === 'approved'" class="d-flex justify-content-end gap-2">
+                    <button 
+                      type="button" 
+                      class="btn btn-sm btn-outline-warning font-accent px-2 py-1"
+                      title="Suspend access to kitchen portal"
+                      (click)="rejectManager(m)">
+                      <i class="fa-solid fa-ban me-1"></i> Suspend
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm btn-outline-danger font-accent px-2 py-1"
+                      title="Delete manager record"
+                      (click)="deleteManager(m)">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+
+                  <!-- If Suspended: Show Reactivate & Delete -->
+                  <div *ngIf="m.status === 'suspended' || m.status === 'rejected'" class="d-flex justify-content-end gap-2">
+                    <button 
+                      type="button" 
+                      class="btn btn-sm btn-outline-success font-accent px-2 py-1"
+                      title="Reactivate and grant login access"
+                      (click)="approveManager(m)">
+                      <i class="fa-solid fa-rotate-left me-1"></i> Re-Approve
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm btn-outline-danger font-accent px-2 py-1"
+                      title="Delete manager record"
+                      (click)="deleteManager(m)">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+
+                </td>
+
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- Single Admin Security & SQL Database Helper Row -->
+      <div class="row g-4">
+        
+        <!-- Active Session Info & Testing Role Switcher -->
+        <div class="col-lg-5">
+          <div class="glass-panel rounded-4 p-4">
+            <h3 class="h6 text-white font-accent fw-bold mb-3 d-flex align-items-center gap-2">
+              <i class="fa-solid fa-shield-halved text-gold"></i>
+              Active Admin Session
+            </h3>
+            
+            <div class="p-3 rounded-3 bg-dark bg-opacity-60 border border-gold border-opacity-25 mb-4">
+              <div class="small text-muted">Currently Logged In As:</div>
+              <div class="fw-bold text-white fs-6 font-accent">
+                {{ supabaseService.getCurrentProfile()?.full_name || 'Executive Master Administrator' }}
+              </div>
+              <div class="small text-secondary">{{ supabaseService.getCurrentUser()?.email || 'admin@foodiehub.com' }}</div>
+              <div class="mt-2 d-flex align-items-center gap-2">
+                <span class="badge bg-gold text-dark font-accent px-3 py-1 text-uppercase">
+                  <i class="fa-solid fa-crown me-1"></i> Role: admin
+                </span>
+                <span class="badge bg-dark border border-secondary text-secondary small font-accent">
+                  Single Admin Mode Active
+                </span>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-3 bg-dark border border-secondary border-opacity-25 small text-secondary">
+              <div class="text-white fw-bold mb-1 font-accent">
+                <i class="fa-solid fa-circle-check text-success me-1"></i> System Security Rule
+              </div>
+              Public signup for administrators is completely blocked. Only this master account can approve, reject, or manage restaurant managers.
+            </div>
+          </div>
+        </div>
+
+        <!-- Supabase Database Schema Helper -->
+        <div class="col-lg-7">
+          <div class="glass-panel rounded-4 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h3 class="h6 text-white font-accent fw-bold mb-0">Supabase Schema & SQL Integration</h3>
+                <div class="text-secondary small">Includes <code>public.managers</code> and <code>public.food_items</code> tables.</div>
+              </div>
+              <button 
+                type="button" 
+                class="btn btn-sm btn-outline-gold rounded-pill font-accent"
+                (click)="copySqlSchema()">
+                <i class="fa-solid" [ngClass]="sqlCopied ? 'fa-check text-success' : 'fa-copy'"></i>
+                {{ sqlCopied ? 'Copied to Clipboard!' : 'Copy Schema SQL' }}
+              </button>
+            </div>
+
+            <div class="p-3 rounded-3 bg-dark font-monospace small text-light border border-secondary border-opacity-25 overflow-auto" style="max-height: 200px;">
+              <pre class="mb-0 text-gold"><code>-- Run in Supabase SQL Editor:
+CREATE TABLE IF NOT EXISTS public.managers (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  full_name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  phone TEXT,
+  branch TEXT DEFAULT 'Main Branch',
+  status TEXT NOT NULL DEFAULT 'pending', -- 'pending' | 'approved' | 'suspended'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  approved_at TIMESTAMP WITH TIME ZONE
+);</code></pre>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- DIRECT ONBOARD MANAGER MODAL -->
+    <div class="food-modal-backdrop" *ngIf="showDirectAddManagerModal" (click)="showDirectAddManagerModal = false">
+      <div class="food-modal-dialog" (click)="$event.stopPropagation()">
+        <div class="food-modal-content glass-panel p-4 p-md-5 rounded-4 border border-gold border-opacity-30 shadow-lg position-relative">
+          
+          <!-- Modal Header -->
+          <div class="d-flex justify-content-between align-items-center pb-3 border-bottom border-light mb-4">
+            <div>
+              <h2 class="h5 text-white font-accent mb-0 fw-bold">
+                <i class="fa-solid fa-user-plus text-gold me-2"></i> Onboard Pre-Approved Manager
+              </h2>
+              <p class="text-secondary small mb-0">Create a manager account that is immediately approved without waiting for self-signup.</p>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle icon-btn" (click)="showDirectAddManagerModal = false">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <!-- Alert Feedbacks -->
+          <div *ngIf="directManagerSuccess" class="alert alert-success py-2 px-3 small rounded-3 mb-3">
+            <i class="fa-solid fa-circle-check me-2"></i> {{ directManagerSuccess }}
+          </div>
+          <div *ngIf="directManagerError" class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
+            <i class="fa-solid fa-circle-exclamation me-2"></i> {{ directManagerError }}
+          </div>
+
+          <!-- Direct Form -->
+          <div>
+            <div class="mb-3">
+              <label class="form-label text-secondary small mb-1 fw-medium">Full Name *</label>
+              <input type="text" class="form-control form-control-dark" [(ngModel)]="directManagerName" placeholder="e.g. David Vance">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-secondary small mb-1 fw-medium">Manager Email Address *</label>
+              <input type="email" class="form-control form-control-dark" [(ngModel)]="directManagerEmail" placeholder="e.g. david.vance@foodiehub.com">
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-sm-6">
+                <label class="form-label text-secondary small mb-1 fw-medium">Contact Phone</label>
+                <input type="tel" class="form-control form-control-dark" [(ngModel)]="directManagerPhone" placeholder="+1 555-234-5678">
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label text-secondary small mb-1 fw-medium">Branch / Location</label>
+                <input type="text" class="form-control form-control-dark" [(ngModel)]="directManagerBranch" placeholder="Downtown Flagship">
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label text-secondary small mb-1 fw-medium">Initial Password * (Min 6 chars)</label>
+              <input type="password" class="form-control form-control-dark" [(ngModel)]="directManagerPassword" placeholder="••••••••">
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary font-accent px-3 py-2"
+                (click)="showDirectAddManagerModal = false">
+                Cancel
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-gold font-accent fw-bold px-4 py-2"
+                [disabled]="isDirectAddingManager"
+                (click)="onboardManagerDirectly()">
+                <span *ngIf="isDirectAddingManager" class="spinner-border spinner-border-sm me-1"></span>
+                <i *ngIf="!isDirectAddingManager" class="fa-solid fa-user-check me-1"></i>
+                Save & Authorize Manager
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- ADD / EDIT FOOD ITEM MODAL -->
+<!-- ======================================================== -->
+<div class="food-modal-backdrop" *ngIf="showFoodModal" (click)="closeFoodModal()">
+  <div class="food-modal-dialog" (click)="$event.stopPropagation()">
+    <div class="food-modal-content glass-panel p-4 p-md-5 rounded-4 border border-gold border-opacity-30 shadow-lg position-relative">
+      
+      <!-- Modal Header -->
+      <div class="d-flex justify-content-between align-items-center pb-3 border-bottom border-light mb-4">
+        <div>
+          <h2 class="h4 text-white font-accent mb-0 fw-bold">
+            <i class="fa-solid" [ngClass]="isEditMode ? 'fa-pen-to-square text-warning' : 'fa-circle-plus text-gold'"></i>
+            {{ isEditMode ? 'Edit Food Item' : 'Add New Food Item to Menu' }}
+          </h2>
+          <p class="text-secondary small mb-0">Fill dish details to publish directly to restaurant menu</p>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle icon-btn" (click)="closeFoodModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Feedback Alerts -->
+      <div *ngIf="foodActionSuccess" class="alert alert-success py-2 px-3 small rounded-3 mb-3">
+        <i class="fa-solid fa-circle-check me-2"></i> {{ foodActionSuccess }}
+      </div>
+      <div *ngIf="foodActionError" class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
+        <i class="fa-solid fa-circle-exclamation me-2"></i> {{ foodActionError }}
+      </div>
+
+      <!-- Quick Photo Presets Carousel -->
+      <div class="mb-4 p-3 rounded-3 bg-dark bg-opacity-60 border border-light">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="small text-gold fw-semibold font-accent">
+            <i class="fa-solid fa-wand-magic-sparkles me-1"></i> Quick 1-Click Photo & Dish Presets:
+          </span>
+          <span class="small text-muted">Click to auto-fill photo & category</span>
+        </div>
+        <div class="d-flex gap-2 overflow-auto pb-2 scrollbar-thin">
+          <button 
+            *ngFor="let preset of photoPresets"
+            type="button" 
+            class="preset-card btn btn-dark p-1 rounded-3 text-start border border-secondary border-opacity-25 flex-shrink-0"
+            (click)="applyPhotoPreset(preset)">
+            <img [src]="preset.url" [alt]="preset.name" class="preset-thumb rounded-2">
+            <div class="preset-label small px-1 pt-1 text-truncate">{{ preset.name }}</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Food Form -->
+      <form [formGroup]="foodForm" (ngSubmit)="saveFoodItem()">
+        <div class="row g-3">
+          
+          <!-- Dish Name -->
+          <div class="col-md-7">
+            <label class="form-label text-secondary small fw-medium">Food / Recipe Name *</label>
+            <input 
+              type="text" 
+              class="form-control form-control-dark" 
+              formControlName="name" 
+              placeholder="e.g. Truffle Woodfired Margherita"
+              [class.is-invalid]="foodForm.get('name')?.touched && foodForm.get('name')?.invalid">
+            <div *ngIf="foodForm.get('name')?.touched && foodForm.get('name')?.invalid" class="text-danger small mt-1">
+              Name is required (at least 2 chars).
+            </div>
+          </div>
+
+          <!-- Category -->
+          <div class="col-md-5">
+            <label class="form-label text-secondary small fw-medium">Menu Category *</label>
+            <select class="form-select form-select-dark" formControlName="category">
+              <option value="Pizza">Pizza</option>
+              <option value="Burgers">Burgers</option>
+              <option value="Pasta">Pasta</option>
+              <option value="Steaks">Steaks</option>
+              <option value="Seafood">Seafood</option>
+              <option value="Salads">Salads</option>
+              <option value="Desserts">Desserts</option>
+              <option value="Drinks">Drinks</option>
+              <option value="Mains">Mains / Entrees</option>
+              <option value="Appetizers">Appetizers</option>
+            </select>
+          </div>
+
+          <!-- Price & Cuisine -->
+          <div class="col-md-4">
+            <label class="form-label text-secondary small fw-medium">Price ($) *</label>
+            <div class="input-group">
+              <span class="input-group-text bg-transparent border-light text-gold fw-bold">$</span>
+              <input 
+                type="number" 
+                step="0.01" 
+                class="form-control form-control-dark border-start-0" 
+                formControlName="price" 
+                placeholder="16.99">
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label text-secondary small fw-medium">Cuisine</label>
+            <input 
+              type="text" 
+              class="form-control form-control-dark" 
+              formControlName="cuisine" 
+              placeholder="e.g. Italian, American, Japanese">
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label text-secondary small fw-medium">Difficulty</label>
+            <select class="form-select form-select-dark" formControlName="difficulty">
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard / Artisan</option>
+            </select>
+          </div>
+
+          <!-- Image URL -->
+          <div class="col-12">
+            <label class="form-label text-secondary small fw-medium">Image URL *</label>
+            <div class="d-flex gap-2">
+              <input 
+                type="url" 
+                class="form-control form-control-dark flex-grow-1" 
+                formControlName="image" 
+                placeholder="https://images.unsplash.com/...">
+              <img 
+                *ngIf="foodForm.get('image')?.value" 
+                [src]="foodForm.get('image')?.value" 
+                alt="Preview" 
+                class="preview-thumb rounded-2 border border-gold"
+                onerror="this.style.display='none'">
+            </div>
+          </div>
+
+          <!-- Prep Time, Cook Time, Servings, Calories -->
+          <div class="col-6 col-md-3">
+            <label class="form-label text-secondary small fw-medium">Prep (mins)</label>
+            <input type="number" class="form-control form-control-dark" formControlName="prepTimeMinutes">
+          </div>
+          <div class="col-6 col-md-3">
+            <label class="form-label text-secondary small fw-medium">Cook (mins)</label>
+            <input type="number" class="form-control form-control-dark" formControlName="cookTimeMinutes">
+          </div>
+          <div class="col-6 col-md-3">
+            <label class="form-label text-secondary small fw-medium">Servings</label>
+            <input type="number" class="form-control form-control-dark" formControlName="servings">
+          </div>
+          <div class="col-6 col-md-3">
+            <label class="form-label text-secondary small fw-medium">Calories</label>
+            <input type="number" class="form-control form-control-dark" formControlName="caloriesPerServing">
+          </div>
+
+          <!-- Ingredients -->
+          <div class="col-12">
+            <label class="form-label text-secondary small fw-medium">Key Ingredients (comma separated)</label>
+            <textarea 
+              class="form-control form-control-dark" 
+              rows="2" 
+              formControlName="ingredients" 
+              placeholder="e.g. Mozzarella, Truffle Oil, Basil leaves, Sea salt"></textarea>
+          </div>
+
+          <!-- Description / Instructions -->
+          <div class="col-12">
+            <label class="form-label text-secondary small fw-medium">Dish Description & Chef Instructions</label>
+            <textarea 
+              class="form-control form-control-dark" 
+              rows="2" 
+              formControlName="instructions" 
+              placeholder="Provide a delicious description for customers..."></textarea>
+          </div>
+
+          <!-- Tags -->
+          <div class="col-md-6">
+            <label class="form-label text-secondary small fw-medium">Tags (comma separated)</label>
+            <input type="text" class="form-control form-control-dark" formControlName="tags" placeholder="e.g. Spicy, Gourmet, Signature">
+          </div>
+
+          <!-- Checkbox Toggles -->
+          <div class="col-md-6 d-flex align-items-center gap-4 pt-md-4">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="availSwitch" formControlName="is_available">
+              <label class="form-check-label text-white small" for="availSwitch">In Stock / Available</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="featSwitch" formControlName="is_featured">
+              <label class="form-check-label text-gold small" for="featSwitch">Featured on Home</label>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Submit and Cancel -->
+        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top border-light">
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-4" (click)="closeFoodModal()">
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-gold rounded-pill px-4 font-accent fw-bold d-flex align-items-center gap-2"
+            [disabled]="isSavingFood">
+            <span *ngIf="isSavingFood" class="spinner-border spinner-border-sm"></span>
+            <i *ngIf="!isSavingFood" class="fa-solid fa-check"></i>
+            <span>{{ isEditMode ? 'Update Dish' : 'Publish Dish to Menu' }}</span>
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- DELETE CONFIRMATION MODAL -->
+<!-- ======================================================== -->
+<div class="food-modal-backdrop" *ngIf="showDeleteModal" (click)="closeDeleteModal()">
+  <div class="food-modal-dialog" style="max-width: 450px;" (click)="$event.stopPropagation()">
+    <div class="glass-panel p-4 rounded-4 border border-danger border-opacity-50 shadow-lg text-center">
+      <div class="mb-3 text-danger fs-1">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3 class="h5 text-white font-accent fw-bold mb-2">Delete Food Item?</h3>
+      <p class="text-secondary small mb-4">
+        Are you sure you want to remove <strong>"{{ recipeToDelete?.name }}"</strong> from the restaurant menu? This action cannot be undone.
+      </p>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-secondary flex-fill rounded-pill" (click)="closeDeleteModal()">
+          Cancel
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-danger flex-fill rounded-pill d-flex align-items-center justify-content-center gap-1"
+          [disabled]="isDeletingFood"
+          (click)="confirmDelete()">
+          <span *ngIf="isDeletingFood" class="spinner-border spinner-border-sm"></span>
+          <i *ngIf="!isDeletingFood" class="fa-solid fa-trash-can"></i>
+          <span>Confirm Delete</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

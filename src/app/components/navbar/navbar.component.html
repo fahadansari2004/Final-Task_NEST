@@ -6,8 +6,14 @@
       <span class="brand-text">Foodie<span class="text-gold">Hub</span></span>
     </a>
 
-    <!-- Cart icon for mobile view (shows next to hamburger) -->
-    <div class="d-flex align-items-center d-lg-none ms-auto me-3">
+    <!-- Cart & User icon for mobile view (shows next to hamburger) -->
+    <div class="d-flex align-items-center d-lg-none ms-auto me-3 gap-2">
+      <!-- User icon for mobile -->
+      <a class="nav-link user-icon-mobile" [routerLink]="currentUser ? '/profile' : '/auth'" [title]="currentUser ? 'My Profile' : 'Sign In'">
+        <i class="fa-solid" [class.fa-user-check]="currentUser" [class.fa-user]="!currentUser" [class.text-gold]="currentUser"></i>
+      </a>
+
+      <!-- Cart icon for mobile -->
       <a class="nav-link cart-icon-wrapper position-relative" routerLink="/cart">
         <i class="fa-solid fa-bag-shopping"></i>
         <span class="badge rounded-pill bg-gold-badge position-absolute top-0 start-100 translate-middle" *ngIf="cartCount > 0">
@@ -38,9 +44,86 @@
         <li class="nav-item">
           <a class="nav-link" routerLink="/contact" routerLinkActive="active">Contact</a>
         </li>
+
+        <!-- Staff Direct Navigation for Admin -->
+        <li class="nav-item" *ngIf="supabaseService.hasRole('admin')">
+          <a class="nav-link text-gold fw-bold d-flex align-items-center gap-1" routerLink="/admin" routerLinkActive="active">
+            <i class="fa-solid fa-crown text-gold"></i> Admin
+          </a>
+        </li>
+
+        <!-- Staff Direct Navigation for Manager -->
+        <li class="nav-item" *ngIf="supabaseService.hasRole('manager') || supabaseService.hasRole('admin')">
+          <a class="nav-link text-warning fw-semibold d-flex align-items-center gap-1" routerLink="/manager" routerLinkActive="active">
+            <i class="fa-solid fa-bell-concierge"></i> Kitchen Desk
+          </a>
+        </li>
+
         <li class="nav-item mt-3 mt-lg-0 ms-lg-3">
           <a class="btn btn-gold px-4 py-2" routerLink="/reservation">Book A Table</a>
         </li>
+
+        <!-- User Authentication & Profile (Desktop) -->
+        <li class="nav-item ms-lg-3" *ngIf="!currentUser">
+          <a class="nav-link d-flex align-items-center gap-1 text-gold fw-semibold" routerLink="/auth" routerLinkActive="active">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
+          </a>
+        </li>
+
+        <li class="nav-item dropdown ms-lg-3" *ngIf="currentUser">
+          <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 user-nav-pill px-3 py-1 rounded-pill" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-circle-user text-gold fs-5"></i>
+            <span class="user-pill-name">{{ userProfile?.full_name || 'My Account' }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end custom-dropdown shadow-lg">
+            <li>
+              <div class="dropdown-header text-muted small pb-1">Signed in as</div>
+              <div class="dropdown-header text-white fw-bold pt-0 text-truncate" style="max-width: 200px;">
+                {{ currentUser.email }}
+              </div>
+              <div class="px-3 pb-1" *ngIf="supabaseService.hasRole('staff')">
+                <span class="badge bg-gold text-dark font-accent text-uppercase small">
+                  {{ supabaseService.getUserRole() }}
+                </span>
+              </div>
+            </li>
+            <li><hr class="dropdown-divider border-secondary border-opacity-25"></li>
+            
+            <!-- Admin Panel Link -->
+            <li *ngIf="supabaseService.hasRole('admin')">
+              <a class="dropdown-item d-flex align-items-center text-gold fw-bold" routerLink="/admin">
+                <i class="fa-solid fa-crown me-2"></i> Admin Panel
+              </a>
+            </li>
+
+            <!-- Manager Kitchen Orders Link -->
+            <li *ngIf="supabaseService.hasRole('manager') || supabaseService.hasRole('admin')">
+              <a class="dropdown-item d-flex align-items-center text-warning" routerLink="/manager">
+                <i class="fa-solid fa-bell-concierge me-2"></i> Orders & Kitchen
+              </a>
+            </li>
+
+            <li *ngIf="supabaseService.hasRole('staff')"><hr class="dropdown-divider border-secondary border-opacity-25"></li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" routerLink="/profile">
+                <i class="fa-regular fa-id-card me-2 text-gold"></i> My Profile
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" routerLink="/orders">
+                <i class="fa-solid fa-clock-rotate-left me-2 text-gold"></i> Order History
+              </a>
+            </li>
+            <li><hr class="dropdown-divider border-secondary border-opacity-25"></li>
+            <li>
+              <button class="dropdown-item text-danger d-flex align-items-center" (click)="signOut()">
+                <i class="fa-solid fa-arrow-right-from-bracket me-2"></i> Sign Out
+              </button>
+            </li>
+          </ul>
+        </li>
+
         <!-- Cart icon for desktop -->
         <li class="nav-item d-none d-lg-block ms-lg-3">
           <a class="nav-link cart-icon-wrapper position-relative" routerLink="/cart" routerLinkActive="active">

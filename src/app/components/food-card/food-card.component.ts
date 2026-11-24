@@ -19,6 +19,9 @@ export class FoodCardComponent {
   addToCart(event: Event): void {
     event.stopPropagation();
     event.preventDefault();
+    if (this.recipe.is_available === false) {
+      return;
+    }
     this.cartService.addToCart(this.recipe);
   }
 }

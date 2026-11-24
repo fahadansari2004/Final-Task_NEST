@@ -1,0 +1,305 @@
+<section class="profile-section py-5">
+  <div class="container py-lg-4">
+    
+    <!-- User Top Card -->
+    <div class="user-header glass-card p-4 p-md-4 mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+      <div class="d-flex align-items-center gap-3">
+        <div class="user-avatar-circle">
+          <i class="fa-solid fa-user-tie text-gold fs-2"></i>
+        </div>
+        <div>
+          <h2 class="user-name mb-0 text-white">
+            {{ currentUserProfile?.full_name || 'Valued Guest' }}
+          </h2>
+          <span class="text-gold small">
+            <i class="fa-regular fa-envelope me-1"></i>{{ userEmail }}
+          </span>
+        </div>
+      </div>
+      
+      <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-outline-danger btn-sm px-3 py-2 rounded-pill" (click)="onSignOut()">
+          <i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Sign Out
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="profile-nav-tabs d-flex gap-2 mb-4 border-bottom border-secondary border-opacity-25 pb-2">
+      <button 
+        type="button" 
+        class="tab-link btn btn-link text-decoration-none px-3 py-2 rounded-3 transition-all"
+        [class.active]="activeTab === 'profile'"
+        (click)="setTab('profile')">
+        <i class="fa-regular fa-id-card me-2"></i>Profile Details
+      </button>
+
+      <button 
+        type="button" 
+        class="tab-link btn btn-link text-decoration-none px-3 py-2 rounded-3 transition-all"
+        [class.active]="activeTab === 'orders'"
+        (click)="setTab('orders')">
+        <i class="fa-solid fa-clock-rotate-left me-2"></i>Order History
+        <span class="badge bg-gold-badge ms-1" *ngIf="orders.length > 0">{{ orders.length }}</span>
+      </button>
+    </div>
+
+    <!-- TAB 1: PROFILE DETAILS -->
+    <div class="tab-content" *ngIf="activeTab === 'profile'">
+      <div class="row">
+        <div class="col-12 col-lg-8">
+          <div class="glass-card p-4 p-md-5">
+            <h4 class="mb-4 text-white border-bottom border-secondary border-opacity-10 pb-3">
+              <i class="fa-solid fa-user-pen text-gold me-2"></i>Personal & Delivery Information
+            </h4>
+
+            <div class="alert alert-success py-2 px-3 small d-flex align-items-center mb-3" *ngIf="profileSuccess">
+              <i class="fa-solid fa-circle-check me-2 fs-5"></i>
+              <div>{{ profileSuccess }}</div>
+            </div>
+
+            <div class="alert alert-danger py-2 px-3 small d-flex align-items-center mb-3" *ngIf="profileError">
+              <i class="fa-solid fa-circle-exclamation me-2 fs-5"></i>
+              <div>{{ profileError }}</div>
+            </div>
+
+            <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()">
+              <div class="mb-3">
+                <label class="form-label text-secondary small">Email Address (Account ID)</label>
+                <input 
+                  type="text" 
+                  class="form-control custom-input-readonly" 
+                  [value]="userEmail" 
+                  readonly 
+                  disabled>
+                <small class="text-muted">Email is managed by Supabase Authentication</small>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label text-secondary small">Full Name *</label>
+                <input 
+                  type="text" 
+                  class="form-control custom-form-input" 
+                  formControlName="fullName"
+                  placeholder="Enter your full name"
+                  [class.is-invalid]="profileForm.get('fullName')?.touched && profileForm.get('fullName')?.invalid">
+                <div class="invalid-feedback small" *ngIf="profileForm.get('fullName')?.touched && profileForm.get('fullName')?.invalid">
+                  Please provide your name.
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label text-secondary small">Phone Number</label>
+                <input 
+                  type="tel" 
+                  class="form-control custom-form-input" 
+                  formControlName="phone"
+                  placeholder="+1 (555) 000-0000"
+                  [class.is-invalid]="profileForm.get('phone')?.touched && profileForm.get('phone')?.invalid">
+                <div class="invalid-feedback small" *ngIf="profileForm.get('phone')?.touched && profileForm.get('phone')?.invalid">
+                  Please enter a valid phone number.
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label class="form-label text-secondary small">Default Delivery Address</label>
+                <textarea 
+                  rows="3" 
+                  class="form-control custom-form-input" 
+                  formControlName="address"
+                  placeholder="Street address, apartment or suite number, city, postal code"></textarea>
+                <small class="text-muted">Used to auto-fill address during fast checkout</small>
+              </div>
+
+              <button 
+                type="submit" 
+                class="btn btn-gold px-4 py-2 fw-semibold"
+                [disabled]="isSavingProfile">
+                <span class="spinner-border spinner-border-sm me-2" *ngIf="isSavingProfile"></span>
+                {{ isSavingProfile ? 'Saving Changes...' : 'Save Profile Details' }}
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Sidebar Info -->
+        <div class="col-12 col-lg-4 mt-4 mt-lg-0">
+          <div class="glass-card p-4">
+            <h5 class="text-gold mb-3"><i class="fa-solid fa-shield-halved me-2"></i>Account Security</h5>
+            <p class="small text-muted mb-4">
+              Your account is authenticated securely via Supabase Auth with PostgreSQL Row Level Security (RLS) guaranteeing private access to your profile & orders.
+            </p>
+            <div class="d-flex align-items-center gap-2 p-3 rounded-3 bg-dark border border-secondary border-opacity-25">
+              <i class="fa-solid fa-database text-gold fs-4"></i>
+              <div>
+                <strong class="text-white small d-block">Supabase Database</strong>
+                <span class="text-muted extra-small">Real-time sync enabled</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: ORDER HISTORY -->
+    <div class="tab-content" *ngIf="activeTab === 'orders'">
+      <!-- Live Sync Controls & Header -->
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 p-3 rounded-4 glass-card border border-secondary border-opacity-25">
+        <div class="d-flex align-items-center gap-3">
+          <div class="live-sync-indicator d-flex align-items-center gap-2 px-3 py-1 rounded-pill">
+            <span class="live-dot"></span>
+            <span class="small font-accent text-success fw-bold">Live Order Tracker</span>
+          </div>
+          <small class="text-muted d-none d-sm-inline">Status updates automatically in real-time</small>
+        </div>
+
+        <button 
+          type="button" 
+          class="btn btn-sm btn-outline-gold rounded-pill px-3 py-1 font-accent d-flex align-items-center gap-2"
+          (click)="refreshOrders()"
+          [disabled]="isRefreshing">
+          <i class="fa-solid fa-arrows-rotate" [class.fa-spin]="isRefreshing"></i>
+          <span>{{ isRefreshing ? 'Checking...' : 'Refresh Status' }}</span>
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div class="text-center py-5" *ngIf="isLoadingOrders">
+        <div class="spinner-border text-gold mb-3" role="status"></div>
+        <p class="text-muted">Loading your orders...</p>
+      </div>
+
+      <!-- Error State -->
+      <div class="alert alert-warning p-4 glass-card mb-4" *ngIf="ordersError && !isLoadingOrders">
+        <div class="d-flex align-items-center">
+          <i class="fa-solid fa-triangle-exclamation text-gold fs-3 me-3"></i>
+          <div>
+            <h5 class="text-white mb-1">Database Notice</h5>
+            <p class="small text-muted mb-0">{{ ordersError }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="glass-card p-5 text-center" *ngIf="!isLoadingOrders && !ordersError && orders.length === 0">
+        <div class="empty-icon-circle mx-auto mb-3">
+          <i class="fa-solid fa-utensils text-gold fs-2"></i>
+        </div>
+        <h4 class="text-white mb-2">No Orders Yet</h4>
+        <p class="text-muted small mx-auto mb-4" style="max-width: 420px;">
+          You haven't placed any food orders yet. Explore our curated menu and enjoy gourmet cuisine delivered to your doorstep.
+        </p>
+        <a routerLink="/menu" class="btn btn-gold px-4 py-2">
+          Explore Menu
+        </a>
+      </div>
+
+      <!-- Orders List -->
+      <div class="orders-list d-flex flex-column gap-4" *ngIf="!isLoadingOrders && orders.length > 0">
+        <div class="order-card glass-card p-4 rounded-4" *ngFor="let order of orders">
+          
+          <!-- Order Header -->
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 pb-3 border-bottom border-secondary border-opacity-15">
+            <div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="order-ref-badge fw-bold">{{ order.order_ref }}</span>
+                <span class="badge status-badge" [ngClass]="getStatusBadgeClass(order.status)">
+                  <i [class]="getStatusIcon(order.status)" class="me-1"></i>
+                  {{ order.status }}
+                </span>
+              </div>
+              <small class="text-muted d-block mt-1">
+                <i class="fa-regular fa-calendar me-1"></i>{{ order.created_at | date:'medium' }}
+              </small>
+            </div>
+
+            <div class="text-md-end">
+              <div class="fs-5 fw-bold text-gold">${{ order.total_amount | number:'1.2-2' }}</div>
+              <small class="text-muted">{{ (order.order_items?.length || 0) }} item(s)</small>
+            </div>
+          </div>
+
+          <!-- Order Status Progress Stepper -->
+          <div class="order-progress-stepper my-3 p-3 rounded-3" *ngIf="order.status !== 'Cancelled'">
+            <div class="stepper-track">
+              <!-- Step 1: Confirmed -->
+              <div class="stepper-step" [class.completed]="getStatusStepIndex(order.status) >= 1" [class.active]="getStatusStepIndex(order.status) === 1">
+                <div class="step-icon">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+                <div class="step-label">Confirmed</div>
+              </div>
+              <div class="step-line" [class.completed]="getStatusStepIndex(order.status) >= 2"></div>
+
+              <!-- Step 2: Preparing / In Kitchen -->
+              <div class="stepper-step" [class.completed]="getStatusStepIndex(order.status) >= 2" [class.active]="getStatusStepIndex(order.status) === 2">
+                <div class="step-icon">
+                  <i class="fa-solid fa-fire-burner"></i>
+                </div>
+                <div class="step-label">In Kitchen</div>
+              </div>
+              <div class="step-line" [class.completed]="getStatusStepIndex(order.status) >= 3"></div>
+
+              <!-- Step 3: Out for Delivery -->
+              <div class="stepper-step" [class.completed]="getStatusStepIndex(order.status) >= 3" [class.active]="getStatusStepIndex(order.status) === 3">
+                <div class="step-icon">
+                  <i class="fa-solid fa-motorcycle"></i>
+                </div>
+                <div class="step-label">Out for Delivery</div>
+              </div>
+              <div class="step-line" [class.completed]="getStatusStepIndex(order.status) >= 4"></div>
+
+              <!-- Step 4: Delivered -->
+              <div class="stepper-step" [class.completed]="getStatusStepIndex(order.status) >= 4" [class.active]="getStatusStepIndex(order.status) === 4">
+                <div class="step-icon">
+                  <i class="fa-solid fa-box-open"></i>
+                </div>
+                <div class="step-label">Delivered</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cancelled Banner if applicable -->
+          <div class="alert alert-danger p-2 small my-3 d-flex align-items-center gap-2 rounded-3" *ngIf="order.status === 'Cancelled'">
+            <i class="fa-solid fa-triangle-exclamation text-danger"></i>
+            <span>This order was cancelled. Please contact customer care for queries or refunds.</span>
+          </div>
+
+          <!-- Order Content Items -->
+          <div class="py-3">
+            <h6 class="text-secondary small fw-bold mb-3 text-uppercase">Items Ordered</h6>
+            <div class="row g-3">
+              <div class="col-12 col-md-6" *ngFor="let item of order.order_items">
+                <div class="d-flex align-items-center gap-3 p-2 rounded-3 item-pill">
+                  <img 
+                    [src]="item.recipe_image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=200'" 
+                    [alt]="item.recipe_name" 
+                    class="item-thumb rounded-2">
+                  <div class="flex-grow-1 min-w-0">
+                    <h6 class="text-white small mb-0 text-truncate">{{ item.recipe_name }}</h6>
+                    <small class="text-gold">{{ item.quantity }} &times; ${{ item.price | number:'1.2-2' }}</small>
+                  </div>
+                  <span class="text-white small fw-bold">${{ (item.price * item.quantity) | number:'1.2-2' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Order Footer -->
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center pt-3 border-top border-secondary border-opacity-15 gap-3">
+            <div class="small text-muted">
+              <i class="fa-solid fa-location-dot text-gold me-1"></i>
+              <span class="text-secondary">{{ order.delivery_address || 'Address provided at checkout' }}</span>
+            </div>
+
+            <button class="btn btn-outline-gold btn-sm px-3 py-2 text-nowrap" (click)="reorderItems(order)">
+              <i class="fa-solid fa-rotate-right me-1"></i> Reorder All
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

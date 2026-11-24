@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable, forkJoin, of, from, BehaviorSubject } from 'rxjs';
+import { map, catchError, switchMap } from 'rxjs/operators';
+import { SupabaseService } from './supabase.service';
 
 export interface Recipe {
   id: number;
@@ -21,6 +22,8 @@ export interface Recipe {
   mealType: string[];
   price: number;
   category: string;
+  is_available?: boolean;
+  is_featured?: boolean;
 }
 
 @Injectable({
@@ -28,6 +31,8 @@ export interface Recipe {
 })
 export class FoodService {
   private apiUrl = 'https://dummyjson.com/recipes';
+  private itemsChangedSubject = new BehaviorSubject<void>(undefined);
+  itemsChanged$ = this.itemsChangedSubject.asObservable();
 
   // Mock Drinks because dummyjson has very few/no beverage items
   private mockDrinks: Recipe[] = [
@@ -53,7 +58,8 @@ export class FoodService {
       reviewCount: 154,
       mealType: ["Breakfast", "Snack"],
       price: 9.99,
-      category: "Drinks"
+      category: "Drinks",
+      is_available: true
     },
     {
       id: 202,
@@ -77,7 +83,8 @@ export class FoodService {
       reviewCount: 88,
       mealType: ["Lunch", "Dinner"],
       price: 7.99,
-      category: "Drinks"
+      category: "Drinks",
+      is_available: true
     },
     {
       id: 203,
@@ -101,7 +108,8 @@ export class FoodService {
       reviewCount: 42,
       mealType: ["Dinner"],
       price: 11.99,
-      category: "Drinks"
+      category: "Drinks",
+      is_available: true
     },
     {
       id: 204,
@@ -124,7 +132,8 @@ export class FoodService {
       reviewCount: 96,
       mealType: ["Breakfast", "Snack"],
       price: 8.49,
-      category: "Drinks"
+      category: "Drinks",
+      is_available: true
     },
     {
       id: 205,
@@ -148,74 +157,142 @@ export class FoodService {
       reviewCount: 71,
       mealType: ["Lunch", "Dinner"],
       price: 6.99,
-      category: "Drinks"
+      category: "Drinks",
+      is_available: true
     }
   ];
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private supabaseService: SupabaseService
+  ) {}
+
+  getAvailabilityOverrides(): Record<number, boolean> {
+    if (typeof window !== 'undefined') {
+      try {
+        return JSON.parse(localStorage.getItem('fh_food_availability_map') || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+    return {};
+  }
+
+  setAvailability(id: number, isAvailable: boolean): void {
+    if (typeof window !== 'undefined') {
+      try {
+        const overrides = this.getAvailabilityOverrides();
+        overrides[id] = isAvailable;
+        localStorage.setItem('fh_food_availability_map', JSON.stringify(overrides));
+      } catch (e) {}
+    }
+    this.itemsChangedSubject.next();
+  }
 
   // Helper to map and enrich recipes with Price and clean Category tags
   private enrichRecipe(recipe: any): Recipe {
-    // Generate price: (Prep Time + Cook Time) * 0.25 + 6.99. Default to 12.99 if time is 0.
     const baseTime = (recipe.prepTimeMinutes || 0) + (recipe.cookTimeMinutes || 0);
-    const price = baseTime > 0 
-      ? parseFloat((baseTime * 0.22 + 7.99).toFixed(2)) 
-      : 12.99;
+    const price = recipe.price !== undefined 
+      ? Number(recipe.price) 
+      : (baseTime > 0 ? parseFloat((baseTime * 0.22 + 7.99).toFixed(2)) : 12.99);
 
-    // Detect Category
-    let category = 'Others';
+    let category = recipe.category || 'Others';
     const nameLower = (recipe.name || '').toLowerCase();
     const tagsLower = (recipe.tags || []).map((t: string) => t.toLowerCase());
 
-    if (tagsLower.includes('pizza') || nameLower.includes('pizza')) {
-      category = 'Pizza';
-    } else if (tagsLower.includes('burger') || nameLower.includes('burger') || nameLower.includes('sandwich')) {
-      category = 'Burgers';
-    } else if (tagsLower.includes('pasta') || nameLower.includes('pasta') || nameLower.includes('spaghetti') || nameLower.includes('macaroni')) {
-      category = 'Pasta';
-    } else if (tagsLower.includes('dessert') || tagsLower.includes('sweet') || nameLower.includes('dessert') || nameLower.includes('cake') || nameLower.includes('cookie') || nameLower.includes('pudding')) {
-      category = 'Desserts';
-    } else if (tagsLower.includes('beverage') || tagsLower.includes('drink') || nameLower.includes('drink') || nameLower.includes('shake') || nameLower.includes('smoothie')) {
-      category = 'Drinks';
+    if (!recipe.category || recipe.category === 'Others') {
+      if (tagsLower.includes('pizza') || nameLower.includes('pizza')) {
+        category = 'Pizza';
+      } else if (tagsLower.includes('burger') || nameLower.includes('burger') || nameLower.includes('sandwich')) {
+        category = 'Burgers';
+      } else if (tagsLower.includes('pasta') || nameLower.includes('pasta') || nameLower.includes('spaghetti') || nameLower.includes('macaroni')) {
+        category = 'Pasta';
+      } else if (tagsLower.includes('dessert') || tagsLower.includes('sweet') || nameLower.includes('dessert') || nameLower.includes('cake') || nameLower.includes('cookie') || nameLower.includes('pudding')) {
+        category = 'Desserts';
+      } else if (tagsLower.includes('beverage') || tagsLower.includes('drink') || nameLower.includes('drink') || nameLower.includes('shake') || nameLower.includes('smoothie')) {
+        category = 'Drinks';
+      }
     }
 
+    const overrides = this.getAvailabilityOverrides();
+    const isAvailable = overrides[recipe.id] !== undefined
+      ? overrides[recipe.id]
+      : (recipe.is_available !== false);
+
     return {
-      ...recipe,
+      id: Number(recipe.id),
+      name: recipe.name || 'Delicious Dish',
+      ingredients: Array.isArray(recipe.ingredients) ? recipe.ingredients : [],
+      instructions: Array.isArray(recipe.instructions) ? recipe.instructions : [],
+      prepTimeMinutes: recipe.prep_time_minutes || recipe.prepTimeMinutes || 15,
+      cookTimeMinutes: recipe.cook_time_minutes || recipe.cookTimeMinutes || 15,
+      servings: recipe.servings || 2,
+      difficulty: recipe.difficulty || 'Easy',
+      cuisine: recipe.cuisine || 'International',
+      caloriesPerServing: recipe.calories_per_serving || recipe.caloriesPerServing || 350,
+      tags: Array.isArray(recipe.tags) ? recipe.tags : [category],
+      image: recipe.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=600',
+      rating: Number(recipe.rating || 4.8),
+      reviewCount: Number(recipe.review_count || recipe.reviewCount || 10),
+      mealType: Array.isArray(recipe.meal_type || recipe.mealType) ? (recipe.meal_type || recipe.mealType) : ['Lunch', 'Dinner'],
       price,
-      category
+      category,
+      is_available: isAvailable,
+      is_featured: Boolean(recipe.is_featured)
     };
   }
 
-  // Get all recipes, optionally filtered by category
+  // Get all recipes (DummyJSON recipes + mock drinks + admin custom recipes from Supabase/Local)
   getRecipes(): Observable<Recipe[]> {
-    return this.http.get<{ recipes: any[] }>(`${this.apiUrl}?limit=100`).pipe(
-      map(res => {
-        const enriched = res.recipes.map(r => this.enrichRecipe(r));
-        // Add mock drinks to the array
-        return [...enriched, ...this.mockDrinks];
-      }),
-      catchError(err => {
-        console.error('Error fetching recipes, returning fallback mock drinks', err);
-        return of(this.mockDrinks);
+    return from(this.supabaseService.getCustomFoodItems()).pipe(
+      switchMap(customItems => {
+        const parsedCustom: Recipe[] = customItems.map(c => this.enrichRecipe(c));
+
+        return this.http.get<{ recipes: any[] }>(`${this.apiUrl}?limit=100`).pipe(
+          map(res => {
+            const enriched = res.recipes.map(r => this.enrichRecipe(r));
+            // Custom items first, then mock drinks, then dummyjson
+            return [...parsedCustom, ...this.mockDrinks.map(d => this.enrichRecipe(d)), ...enriched];
+          }),
+          catchError(err => {
+            console.warn('API error, returning custom and mock items', err);
+            return of([...parsedCustom, ...this.mockDrinks.map(d => this.enrichRecipe(d))]);
+          })
+        );
       })
     );
   }
 
-  // Get featured recipes (highly rated, e.g. rating >= 4.8)
-  getFeaturedRecipes(limit: number = 6): Observable<Recipe[]> {
+  // Get featured recipes (rating >= 4.8 or flagged as featured, prioritizing available items)
+  getFeaturedRecipes(limit: number = 3): Observable<Recipe[]> {
     return this.getRecipes().pipe(
-      map(recipes => recipes.filter(r => r.rating >= 4.8).slice(0, limit))
+      map(recipes => {
+        const availableFeatured = recipes.filter(r => r.is_available !== false && (r.is_featured || r.rating >= 4.8));
+        if (availableFeatured.length >= limit) {
+          return availableFeatured.slice(0, limit);
+        }
+        const available = recipes.filter(r => r.is_available !== false);
+        return available.slice(0, limit);
+      })
     );
   }
 
   // Get unique categories list
   getCategories(): Observable<string[]> {
-    return of(['All', 'Pizza', 'Burgers', 'Pasta', 'Desserts', 'Drinks']);
+    return this.getRecipes().pipe(
+      map(recipes => {
+        const base = ['All', 'Pizza', 'Burgers', 'Pasta', 'Desserts', 'Drinks'];
+        const additional = recipes
+          .map(r => r.category)
+          .filter(c => c && !base.includes(c));
+        return [...base, ...Array.from(new Set(additional))];
+      })
+    );
   }
 
   // Get recipes by category
   getRecipesByCategory(category: string): Observable<Recipe[]> {
-    if (category === 'All') {
+    if (!category || category === 'All') {
       return this.getRecipes();
     }
     return this.getRecipes().pipe(
@@ -225,16 +302,25 @@ export class FoodService {
 
   // Get recipe by ID
   getRecipeById(id: number): Observable<Recipe | undefined> {
-    // If it's a mock drink, retrieve from mock array
-    if (id >= 200) {
-      const drink = this.mockDrinks.find(d => d.id === id);
-      return of(drink);
-    }
-    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
-      map(res => this.enrichRecipe(res)),
-      catchError(err => {
-        console.error(`Error fetching recipe ID ${id}`, err);
-        return of(undefined);
+    return from(this.supabaseService.getCustomFoodItems()).pipe(
+      switchMap(customItems => {
+        const foundCustom = customItems.find((c: any) => Number(c.id) === Number(id));
+        if (foundCustom) {
+          return of(this.enrichRecipe(foundCustom));
+        }
+
+        if (id >= 200 && id < 300) {
+          const drink = this.mockDrinks.find(d => d.id === id);
+          return of(drink);
+        }
+
+        return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+          map(res => this.enrichRecipe(res)),
+          catchError(err => {
+            console.error(`Error fetching recipe ID ${id}`, err);
+            return of(undefined);
+          })
+        );
       })
     );
   }
@@ -256,8 +342,43 @@ export class FoodService {
       map(recipes => recipes.filter(r => 
         r.name.toLowerCase().includes(cleanQuery) || 
         r.cuisine.toLowerCase().includes(cleanQuery) ||
+        r.category.toLowerCase().includes(cleanQuery) ||
         r.tags.some(t => t.toLowerCase().includes(cleanQuery))
       ))
     );
   }
+
+  // Admin: Add new food item
+  addFoodItem(item: Partial<Recipe>): Observable<Recipe> {
+    return from(this.supabaseService.addCustomFoodItem(item)).pipe(
+      map(saved => {
+        this.itemsChangedSubject.next();
+        return this.enrichRecipe(saved);
+      })
+    );
+  }
+
+  // Admin: Update food item
+  updateFoodItem(id: number, item: Partial<Recipe>): Observable<Recipe> {
+    if (item.is_available !== undefined) {
+      this.setAvailability(id, item.is_available);
+    }
+    return from(this.supabaseService.updateCustomFoodItem(id, item)).pipe(
+      map(updated => {
+        this.itemsChangedSubject.next();
+        return this.enrichRecipe(updated);
+      })
+    );
+  }
+
+  // Admin: Delete food item
+  deleteFoodItem(id: number): Observable<boolean> {
+    return from(this.supabaseService.deleteCustomFoodItem(id)).pipe(
+      map(success => {
+        this.itemsChangedSubject.next();
+        return success;
+      })
+    );
+  }
 }
+

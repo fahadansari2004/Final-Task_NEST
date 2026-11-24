@@ -1,0 +1,317 @@
+<section class="staff-login-section section-padding min-vh-100 d-flex align-items-center">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-7 col-md-9 col-12">
+        
+        <!-- Brand Link -->
+        <div class="text-center mb-4">
+          <a routerLink="/" class="d-inline-flex align-items-center text-decoration-none">
+            <i class="fa-solid fa-fire-burner text-gold fs-2 me-2"></i>
+            <span class="fs-3 fw-bold text-white font-accent">Foodie<span class="text-gold">Hub</span></span>
+          </a>
+          <div class="text-uppercase small tracking-wider text-muted mt-1 font-accent">
+            <i class="fa-solid fa-shield-halved text-gold me-1"></i> Staff Management & Operations Portal
+          </div>
+        </div>
+
+        <div class="glass-panel p-4 p-md-5 position-relative overflow-hidden shadow-lg border border-gold border-opacity-25">
+          <!-- Background Glow Effect -->
+          <div class="glow-orb position-absolute top-0 end-0 translate-middle-y"></div>
+
+          <!-- Role / Portal Selector Tabs -->
+          <div class="portal-selector d-flex rounded-pill p-1 mb-4 bg-dark bg-opacity-75 border border-secondary border-opacity-25">
+            <button 
+              type="button" 
+              class="portal-btn flex-fill rounded-pill py-2 text-center border-0 fw-semibold transition-all d-flex align-items-center justify-content-center gap-2"
+              [class.active]="activePortal === 'admin'"
+              (click)="selectPortal('admin')">
+              <i class="fa-solid fa-crown text-gold"></i>
+              <span>Admin Portal</span>
+            </button>
+            <button 
+              type="button" 
+              class="portal-btn flex-fill rounded-pill py-2 text-center border-0 fw-semibold transition-all d-flex align-items-center justify-content-center gap-2"
+              [class.active]="activePortal === 'manager'"
+              (click)="selectPortal('manager')">
+              <i class="fa-solid fa-utensils text-gold"></i>
+              <span>Manager & Kitchen</span>
+            </button>
+          </div>
+
+          <!-- Portal Badge Description -->
+          <div class="portal-description p-3 rounded-3 mb-4 d-flex align-items-center gap-3" [ngClass]="activePortal === 'admin' ? 'portal-desc-admin' : 'portal-desc-manager'">
+            <div class="portal-icon-box rounded-circle d-flex align-items-center justify-content-center">
+              <i class="fa-solid" [ngClass]="activePortal === 'admin' ? 'fa-screwdriver-wrench' : 'fa-bell-concierge'"></i>
+            </div>
+            <div>
+              <div class="fw-bold text-white font-accent">
+                {{ activePortal === 'admin' ? 'Administrator Control Center' : 'Restaurant Order Reception & Kitchen Desk' }}
+              </div>
+              <div class="small text-secondary">
+                {{ activePortal === 'admin' 
+                  ? 'Manage food catalog, create dishes, inspect financial metrics, oversee store users.' 
+                  : 'Receive real-time customer orders, dispatch delivery orders, update kitchen cooking stages.' }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Alert Messages -->
+          <div *ngIf="errorMessage" class="alert alert-danger py-2 px-3 small rounded-3 d-flex align-items-center mb-3">
+            <i class="fa-solid fa-circle-exclamation me-2 fs-5"></i>
+            <div>{{ errorMessage }}</div>
+          </div>
+
+          <div *ngIf="successMessage" class="alert alert-success py-2 px-3 small rounded-3 d-flex align-items-center mb-3">
+            <i class="fa-solid fa-circle-check me-2 fs-5"></i>
+            <div>{{ successMessage }}</div>
+          </div>
+
+
+
+          <!-- Mode Switcher Tabs for Manager Only (Admin is strictly single-admin login) -->
+          <div class="d-flex justify-content-center mb-4" *ngIf="activePortal === 'manager'">
+            <div class="btn-group p-1 bg-dark bg-opacity-75 rounded-pill border border-secondary border-opacity-25">
+              <button 
+                type="button" 
+                class="btn btn-sm rounded-pill px-3 font-accent"
+                [ngClass]="!isRegisterMode ? 'btn-gold' : 'btn-link text-secondary text-decoration-none'"
+                (click)="toggleMode('login')">
+                <i class="fa-solid fa-right-to-bracket me-1"></i> Manager Sign In
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-sm rounded-pill px-3 font-accent"
+                [ngClass]="isRegisterMode ? 'btn-gold' : 'btn-link text-secondary text-decoration-none'"
+                (click)="toggleMode('register')">
+                <i class="fa-solid fa-user-plus me-1"></i> Apply for Manager Account
+              </button>
+            </div>
+          </div>
+
+          <!-- Single Admin Security Notice Banner -->
+          <div *ngIf="activePortal === 'admin'" class="p-3 rounded-3 mb-4 bg-dark bg-opacity-50 border border-gold border-opacity-20 d-flex align-items-center gap-3">
+            <i class="fa-solid fa-shield-cat text-gold fs-4"></i>
+            <div>
+              <div class="text-white small fw-bold font-accent">Single Master Administrator Enforcement</div>
+              <div class="text-secondary small">Public admin registration is restricted. Only the designated master administrator can access this panel.</div>
+            </div>
+          </div>
+
+          <!-- 1. SIGN IN FORM (Used by Admin and Approved Managers) -->
+          <form [formGroup]="loginForm" (ngSubmit)="onStaffLogin()" *ngIf="!isRegisterMode">
+            <!-- Email -->
+            <div class="mb-3">
+              <label class="form-label text-secondary small fw-medium">
+                {{ activePortal === 'admin' ? 'Master Admin Email' : 'Manager Email' }}
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0 border-light text-muted">
+                  <i class="fa-regular fa-envelope"></i>
+                </span>
+                <input 
+                  type="email" 
+                  class="form-control form-control-dark border-start-0" 
+                  formControlName="email" 
+                  [placeholder]="activePortal === 'admin' ? 'admin@foodiehub.com' : 'manager@foodiehub.com'"
+                  [class.is-invalid]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+              </div>
+              <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="text-danger small mt-1">
+                A valid email address is required.
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between">
+                <label class="form-label text-secondary small fw-medium">Password</label>
+              </div>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0 border-light text-muted">
+                  <i class="fa-solid fa-lock"></i>
+                </span>
+                <input 
+                  [type]="showPassword ? 'text' : 'password'" 
+                  class="form-control form-control-dark border-start-0 border-end-0" 
+                  formControlName="password" 
+                  placeholder="Enter your password"
+                  [class.is-invalid]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+                <button 
+                  type="button" 
+                  class="btn btn-dark border-start-0 border-light text-muted" 
+                  (click)="togglePasswordVisibility()">
+                  <i class="fa-regular" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                </button>
+              </div>
+              <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="text-danger small mt-1">
+                Password must be at least 6 characters.
+              </div>
+            </div>
+
+            <!-- Notice for managers on pending status -->
+            <div *ngIf="activePortal === 'manager'" class="p-2 rounded-2 mb-3 bg-dark bg-opacity-40 border border-secondary border-opacity-25 small text-secondary">
+              <i class="fa-solid fa-circle-info text-gold me-1"></i>
+              <span>Note: Manager accounts can only log in once <strong>approved</strong> by the Administrator.</span>
+            </div>
+
+            <!-- Submit Button -->
+            <button 
+              type="submit" 
+              class="btn btn-gold w-100 py-3 font-accent fw-bold fs-6 d-flex align-items-center justify-content-center gap-2 shadow"
+              [disabled]="isLoading">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm"></span>
+              <i *ngIf="!isLoading" class="fa-solid fa-arrow-right-to-bracket"></i>
+              <span>Access {{ activePortal === 'admin' ? 'Master Admin Panel' : 'Kitchen Order Desk' }}</span>
+            </button>
+          </form>
+
+          <!-- 2. APPLICATION SUBMITTED SUCCESS CARD -->
+          <div *ngIf="isRegisterMode && applicationSubmitted" class="text-center p-4 rounded-4 bg-dark bg-opacity-60 border border-gold border-opacity-30">
+            <div class="d-inline-flex p-3 rounded-circle bg-warning bg-opacity-10 text-gold mb-3 border border-gold border-opacity-25">
+              <i class="fa-solid fa-hourglass-half fs-2"></i>
+            </div>
+            <h3 class="h5 text-white font-accent fw-bold mb-2">Application Submitted for Review!</h3>
+            <p class="text-secondary small mb-3">
+              Your restaurant manager account for <span class="text-gold fw-semibold">{{ submittedManagerEmail }}</span> has been submitted to the Master Administrator.
+            </p>
+            <div class="alert alert-warning py-2 px-3 small rounded-3 mb-4 text-start">
+              <i class="fa-solid fa-circle-exclamation me-2"></i>
+              <strong>Status: PENDING ADMIN APPROVAL</strong><br>
+              The Master Administrator can review and approve your account immediately in the <strong>Admin Panel</strong>. Once approved, you can log in using your password.
+            </div>
+            <button 
+              type="button" 
+              class="btn btn-gold px-4 py-2 font-accent fw-semibold"
+              (click)="goToLoginAfterApplication()">
+              <i class="fa-solid fa-arrow-left me-2"></i> Return to Manager Sign In
+            </button>
+          </div>
+
+          <!-- 3. MANAGER REGISTRATION / APPLICATION FORM -->
+          <form [formGroup]="registerForm" (ngSubmit)="onManagerRegister()" *ngIf="isRegisterMode && !applicationSubmitted">
+            
+            <div class="alert alert-info py-2 px-3 small rounded-3 mb-3 bg-dark border-info border-opacity-30 text-info">
+              <i class="fa-solid fa-circle-info me-2"></i>
+              Apply for restaurant manager privileges. Applications are verified by the Master Administrator before granting kitchen access.
+            </div>
+
+            <!-- Full Name -->
+            <div class="mb-3">
+              <label class="form-label text-secondary small fw-medium">Full Name *</label>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0 border-light text-muted">
+                  <i class="fa-regular fa-user"></i>
+                </span>
+                <input 
+                  type="text" 
+                  class="form-control form-control-dark border-start-0" 
+                  formControlName="fullName" 
+                  placeholder="e.g. Alex Morgan"
+                  [class.is-invalid]="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid">
+              </div>
+              <div *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid" class="text-danger small mt-1">
+                Full name is required (at least 2 letters).
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label class="form-label text-secondary small fw-medium">Manager Email Address *</label>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0 border-light text-muted">
+                  <i class="fa-regular fa-envelope"></i>
+                </span>
+                <input 
+                  type="email" 
+                  class="form-control form-control-dark border-start-0" 
+                  formControlName="email" 
+                  placeholder="e.g. alex.morgan@restaurant.com"
+                  [class.is-invalid]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
+              </div>
+              <div *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid" class="text-danger small mt-1">
+                A valid email address is required.
+              </div>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="mb-3">
+              <label class="form-label text-secondary small fw-medium">Contact Phone Number *</label>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0 border-light text-muted">
+                  <i class="fa-solid fa-phone"></i>
+                </span>
+                <input 
+                  type="tel" 
+                  class="form-control form-control-dark border-start-0" 
+                  formControlName="phone" 
+                  placeholder="e.g. +1 555-019-2831"
+                  [class.is-invalid]="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid">
+              </div>
+              <div *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid" class="text-danger small mt-1">
+                Contact phone is required.
+              </div>
+            </div>
+
+            <!-- Branch / Kitchen Assignment -->
+            <div class="mb-3">
+              <label class="form-label text-secondary small fw-medium">Branch / Kitchen Hub *</label>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0 border-light text-muted">
+                  <i class="fa-solid fa-location-dot"></i>
+                </span>
+                <input 
+                  type="text" 
+                  class="form-control form-control-dark border-start-0" 
+                  formControlName="branch" 
+                  placeholder="e.g. Downtown Flagship / Northside Bistro"
+                  [class.is-invalid]="registerForm.get('branch')?.touched && registerForm.get('branch')?.invalid">
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+              <label class="form-label text-secondary small fw-medium">Create Password *</label>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0 border-light text-muted">
+                  <i class="fa-solid fa-lock"></i>
+                </span>
+                <input 
+                  [type]="showPassword ? 'text' : 'password'" 
+                  class="form-control form-control-dark border-start-0 border-end-0" 
+                  formControlName="password" 
+                  placeholder="At least 6 characters"
+                  [class.is-invalid]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+                <button 
+                  type="button" 
+                  class="btn btn-dark border-start-0 border-light text-muted" 
+                  (click)="togglePasswordVisibility()">
+                  <i class="fa-regular" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                </button>
+              </div>
+              <div *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid" class="text-danger small mt-1">
+                Password must be at least 6 characters.
+              </div>
+            </div>
+
+            <!-- Register Button -->
+            <button 
+              type="submit" 
+              class="btn btn-gold w-100 py-3 font-accent fw-bold fs-6 d-flex align-items-center justify-content-center gap-2 shadow"
+              [disabled]="isLoading">
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm"></span>
+              <i *ngIf="!isLoading" class="fa-solid fa-paper-plane"></i>
+              <span>Submit Manager Application for Approval</span>
+            </button>
+          </form>
+
+          <!-- Back to customer site -->
+          <div class="text-center mt-4 pt-3 border-top border-light">
+            <a routerLink="/" class="text-secondary small text-decoration-none hover-gold d-inline-flex align-items-center gap-1">
+              <i class="fa-solid fa-arrow-left"></i> Return to Customer Dining Website
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

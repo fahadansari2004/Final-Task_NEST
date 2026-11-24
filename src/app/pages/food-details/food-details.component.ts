@@ -86,7 +86,7 @@ export class FoodDetailsComponent implements OnInit, OnDestroy {
   }
 
   addToCart(): void {
-    if (this.recipe) {
+    if (this.recipe && this.recipe.is_available !== false) {
       this.cartService.addToCart(this.recipe, this.quantity);
     }
   }

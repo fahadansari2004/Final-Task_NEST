@@ -24,6 +24,17 @@
             (click)="selectCategory(cat)">
             {{ cat }}
           </button>
+          
+          <!-- Quick Available Only Filter -->
+          <button 
+            type="button"
+            class="btn filter-pill font-accent d-inline-flex align-items-center gap-1 border-gold border-opacity-50" 
+            [class.active-pill]="onlyAvailable"
+            (click)="toggleOnlyAvailable()"
+            title="Filter to only show dishes ready in kitchen today">
+            <i class="fa-solid" [ngClass]="onlyAvailable ? 'fa-circle-check text-success' : 'fa-filter text-gold'"></i>
+            Available Only
+          </button>
         </div>
       </div>
       

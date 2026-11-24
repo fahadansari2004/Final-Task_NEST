@@ -82,7 +82,15 @@
       </div>
 
       <div class="price-box mb-4 py-3 border-top border-bottom border-light">
-        <span class="text-muted d-block small mb-1">Gourmet Price</span>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="text-muted small">Gourmet Price</span>
+          <span *ngIf="recipe.is_available !== false" class="badge bg-success bg-opacity-25 text-success border border-success font-accent px-3 py-1 rounded-pill">
+            <i class="fa-solid fa-circle-check me-1"></i> Available Today
+          </span>
+          <span *ngIf="recipe.is_available === false" class="badge bg-danger bg-opacity-25 text-danger border border-danger font-accent px-3 py-1 rounded-pill">
+            <i class="fa-solid fa-ban me-1"></i> Sold Out / Unavailable Today
+          </span>
+        </div>
         <span class="h2 text-gold fw-bold font-accent">${{ recipe.price | number:'1.2-2' }}</span>
       </div>
 
@@ -120,8 +128,22 @@
         <span class="badge bg-dark-pill me-1" *ngFor="let tag of recipe.tags">#{{ tag }}</span>
       </div>
 
-      <!-- Quantity Adjust & Add to Cart -->
-      <div class="d-flex flex-wrap align-items-center gap-4 pt-3 border-top border-light">
+      <!-- Sold Out / Unavailable Alert and Button -->
+      <div *ngIf="recipe.is_available === false" class="w-100 pt-3 border-top border-light">
+        <div class="alert alert-danger bg-danger bg-opacity-15 border border-danger border-opacity-50 text-white p-3 rounded-3 mb-3 d-flex align-items-center gap-3">
+          <i class="fa-solid fa-circle-exclamation text-danger fs-4"></i>
+          <div>
+            <div class="fw-bold font-accent">Item Currently Unavailable</div>
+            <div class="small text-secondary">The kitchen chef has marked this dish as sold out for today. Please explore our other culinary specialties.</div>
+          </div>
+        </div>
+        <button class="btn btn-secondary w-100 py-3 font-accent" disabled>
+          <i class="fa-solid fa-ban me-2"></i> Sold Out For Today
+        </button>
+      </div>
+
+      <!-- Quantity Adjust & Add to Cart (Available items) -->
+      <div *ngIf="recipe.is_available !== false" class="d-flex flex-wrap align-items-center gap-4 pt-3 border-top border-light">
         <!-- Quantity Selector -->
         <div class="quantity-selector d-flex align-items-center">
           <button class="btn btn-qty" (click)="decrementQuantity()" aria-label="Decrease quantity">

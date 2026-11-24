@@ -22,6 +22,7 @@ export class MenuComponent implements OnInit, OnDestroy {
   selectedCategory = 'All';
   searchQuery = '';
   searchSubject = new Subject<string>();
+  onlyAvailable = false;
   
   isLoading = true;
   currentPage = 1;
@@ -80,6 +81,11 @@ export class MenuComponent implements OnInit, OnDestroy {
     this.searchSubject.next(this.searchQuery);
   }
 
+  toggleOnlyAvailable(): void {
+    this.onlyAvailable = !this.onlyAvailable;
+    this.filterRecipes();
+  }
+
   selectCategory(category: string): void {
     this.selectedCategory = category;
     this.currentPage = 1;
@@ -98,6 +104,11 @@ export class MenuComponent implements OnInit, OnDestroy {
     // Apply category filter
     if (this.selectedCategory !== 'All') {
       result = result.filter(r => r.category.toLowerCase() === this.selectedCategory.toLowerCase());
+    }
+
+    // Apply available only filter
+    if (this.onlyAvailable) {
+      result = result.filter(r => r.is_available !== false);
     }
 
     // Apply search filter

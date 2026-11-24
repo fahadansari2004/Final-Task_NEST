@@ -143,3 +143,83 @@
 .border-light {
   border-color: rgba(255, 255, 255, 0.05) !important;
 }
+
+/* Custom Modal Styles */
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.checkout-modal-dialog {
+  width: 100%;
+  max-width: 620px;
+  animation: modalSlideUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.btn-close-custom {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-close-custom:hover {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+  transform: rotate(90deg);
+}
+
+.modal-input {
+  background: rgba(10, 10, 14, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.modal-input:focus {
+  border-color: var(--color-gold) !important;
+  box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.2) !important;
+}
+
+.btn-outline-gold {
+  border: 1px solid var(--color-gold);
+  color: var(--color-gold);
+  transition: all 0.25s ease;
+}
+
+.btn-outline-gold:hover {
+  background: var(--color-gold);
+  color: #0a0a0c;
+}
+

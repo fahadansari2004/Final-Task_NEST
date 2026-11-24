@@ -1,0 +1,179 @@
+.manager-layout {
+  background-color: var(--bg-dark);
+}
+
+.manager-badge-icon {
+  width: 50px;
+  height: 50px;
+  background: rgba(197, 168, 128, 0.15);
+  border: 1px solid var(--border-glass);
+}
+
+.live-pill {
+  background: rgba(40, 167, 69, 0.15);
+  border: 1px solid rgba(40, 167, 69, 0.3);
+  color: #28a745;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-size: 0.7rem;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #28a745;
+  border-radius: 50%;
+  animation: pulseGreen 1.5s infinite;
+}
+
+@keyframes pulseGreen {
+  0% { transform: scale(0.9); opacity: 0.7; box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+  70% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 0 6px rgba(40, 167, 69, 0); }
+  100% { transform: scale(0.9); opacity: 0.7; box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+}
+
+.pulse-warning-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #ffc107;
+  border-radius: 50%;
+  animation: pulseYellow 1.2s infinite;
+}
+
+@keyframes pulseYellow {
+  0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
+  70% { transform: scale(1.2); box-shadow: 0 0 0 8px rgba(255, 193, 7, 0); }
+  100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+}
+
+.stat-card {
+  transition: all 0.25s ease;
+  border: 1px solid var(--border-light);
+}
+
+.stat-card:hover, .stat-card.active-stat {
+  border-color: var(--color-gold);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.bg-gold-subtle {
+  background: rgba(197, 168, 128, 0.12);
+  border-color: rgba(197, 168, 128, 0.25);
+}
+
+.sub-tab-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.sub-tab-btn.active {
+  background: linear-gradient(135deg, var(--color-gold) 0%, #b39268 100%);
+  color: #000;
+  box-shadow: 0 2px 10px rgba(197, 168, 128, 0.25);
+}
+
+.order-card {
+  transition: all 0.3s ease;
+  background: rgba(18, 18, 22, 0.75);
+}
+
+.order-card:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.shadow-warning-glow {
+  box-shadow: 0 0 20px rgba(255, 193, 7, 0.15);
+  animation: alertPulse 3s infinite alternate;
+}
+
+@keyframes alertPulse {
+  from { border-color: rgba(255, 193, 7, 0.4); }
+  to { border-color: rgba(255, 193, 7, 0.9); }
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.border-dashed {
+  border-style: dashed !important;
+}
+
+.last-no-border:last-child {
+  border-bottom: none !important;
+}
+
+/* Custom Table Styles */
+.custom-table {
+  --bs-table-bg: transparent;
+}
+
+.custom-table th {
+  border-bottom-color: rgba(197, 168, 128, 0.2);
+  padding: 12px 16px;
+}
+
+.custom-table td {
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+  padding: 14px 16px;
+}
+
+/* Thermal Receipt Modal */
+.receipt-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 1060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.receipt-modal-dialog {
+  max-width: 420px;
+  width: 100%;
+}
+
+.receipt-paper {
+  background: #fdfdfd;
+  color: #111;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid #ddd;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .receipt-paper, .receipt-paper * {
+    visibility: visible;
+  }
+  .receipt-paper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none;
+    border: none;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

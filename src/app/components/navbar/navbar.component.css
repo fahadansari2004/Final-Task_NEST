@@ -163,3 +163,69 @@
     right: 10px;
   }
 }
+
+/* User pill & dropdown styling */
+.user-icon-mobile {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+}
+
+.user-nav-pill {
+  background: rgba(197, 168, 128, 0.1);
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  color: var(--text-primary) !important;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.user-nav-pill:hover,
+.user-nav-pill:focus {
+  background: rgba(197, 168, 128, 0.2);
+  border-color: var(--color-gold);
+}
+
+.user-nav-pill::after {
+  display: inline-block;
+  margin-left: 0.5em;
+  vertical-align: 0.255em;
+  content: "";
+  border-top: 0.3em solid;
+  border-right: 0.3em solid transparent;
+  border-bottom: 0;
+  border-left: 0.3em solid transparent;
+  color: var(--color-gold);
+}
+
+.user-pill-name {
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-dropdown {
+  background: rgba(15, 15, 20, 0.98);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(197, 168, 128, 0.2);
+  border-radius: 12px;
+  padding: 8px;
+  min-width: 220px;
+}
+
+.custom-dropdown .dropdown-item {
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.custom-dropdown .dropdown-item:hover {
+  background: rgba(197, 168, 128, 0.15);
+  color: var(--color-gold);
+}
+

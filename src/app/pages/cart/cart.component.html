@@ -33,9 +33,12 @@
             </div>
           </div>
 
-          <div class="d-flex gap-3">
+          <div class="d-flex flex-column flex-sm-row gap-3">
             <button class="btn btn-outline-gold font-accent w-100" (click)="resetOrderState()">Order More</button>
-            <a routerLink="/" class="btn btn-gold font-accent w-100">Return Home</a>
+            <a *ngIf="currentUser" routerLink="/orders" class="btn btn-gold font-accent w-100">
+              <i class="fa-solid fa-clock-rotate-left me-1"></i> View in My Orders
+            </a>
+            <a *ngIf="!currentUser" routerLink="/" class="btn btn-gold font-accent w-100">Return Home</a>
           </div>
         </div>
       </div>
@@ -160,9 +163,8 @@
           <button 
             class="btn btn-gold w-100 py-3 font-accent btn-glow" 
             [disabled]="isCheckingOut"
-            (click)="checkout()">
-            <span *ngIf="!isCheckingOut"><i class="fa-solid fa-credit-card me-2"></i> Proceed to Checkout</span>
-            <span *ngIf="isCheckingOut"><i class="fa-solid fa-circle-notch fa-spin me-2"></i> Processing Order...</span>
+            (click)="openCheckout()">
+            <span><i class="fa-solid fa-credit-card me-2"></i> Proceed to Checkout</span>
           </button>
         </div>
       </div>
@@ -170,3 +172,126 @@
 
   </div>
 </section>
+
+<!-- Checkout Modal -->
+<div class="modal-backdrop-custom" *ngIf="showCheckoutModal">
+  <div class="checkout-modal-dialog">
+    <div class="glass-card p-4 p-md-5 border-glass">
+      
+      <!-- Modal Header -->
+      <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary border-opacity-15">
+        <div>
+          <h3 class="h4 text-white font-serif mb-1 fw-bold">Delivery & Contact Details</h3>
+          <p class="text-gold small mb-0 font-accent">Confirm your details to place your order</p>
+        </div>
+        <button type="button" class="btn btn-close-custom" (click)="closeCheckout()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Auth notice if guest -->
+      <div class="alert alert-dark p-3 rounded-3 mb-4 d-flex justify-content-between align-items-center border-secondary border-opacity-25" *ngIf="!currentUser">
+        <div class="small text-secondary">
+          <i class="fa-solid fa-user-circle text-gold me-2"></i>
+          <span>Have an account? Sign in to save this order to your history!</span>
+        </div>
+        <a routerLink="/auth" [queryParams]="{ returnUrl: '/cart' }" class="btn btn-sm btn-outline-gold text-nowrap ms-2">
+          Sign In
+        </a>
+      </div>
+
+      <!-- Error banner if any -->
+      <div class="alert alert-danger py-2 px-3 small d-flex align-items-center mb-3" *ngIf="orderError">
+        <i class="fa-solid fa-circle-exclamation me-2 fs-5"></i>
+        <div>{{ orderError }}</div>
+      </div>
+
+      <!-- Checkout Form -->
+      <form [formGroup]="checkoutForm" (ngSubmit)="submitOrder()" novalidate>
+        <div class="row g-3 mb-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label text-secondary small">Full Name *</label>
+            <input 
+              type="text" 
+              class="form-control modal-input" 
+              formControlName="name" 
+              placeholder="e.g. Alexander Hamilton"
+              [class.is-invalid]="checkoutForm.get('name')?.touched && checkoutForm.get('name')?.invalid">
+            <div class="invalid-feedback small" *ngIf="checkoutForm.get('name')?.touched && checkoutForm.get('name')?.invalid">
+              Please enter your full name.
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label class="form-label text-secondary small">Email Address *</label>
+            <input 
+              type="email" 
+              class="form-control modal-input" 
+              formControlName="email" 
+              placeholder="name@example.com"
+              [class.is-invalid]="checkoutForm.get('email')?.touched && checkoutForm.get('email')?.invalid">
+            <div class="invalid-feedback small" *ngIf="checkoutForm.get('email')?.touched && checkoutForm.get('email')?.invalid">
+              Please enter a valid email.
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label text-secondary small">Phone Number *</label>
+            <input 
+              type="tel" 
+              class="form-control modal-input" 
+              formControlName="phone" 
+              placeholder="+1 (555) 234-5678"
+              [class.is-invalid]="checkoutForm.get('phone')?.touched && checkoutForm.get('phone')?.invalid">
+            <div class="invalid-feedback small" *ngIf="checkoutForm.get('phone')?.touched && checkoutForm.get('phone')?.invalid">
+              Please enter a valid contact phone number.
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label text-secondary small">Delivery Address *</label>
+            <textarea 
+              rows="2" 
+              class="form-control modal-input" 
+              formControlName="address" 
+              placeholder="Full street address, apartment / suite number, city, ZIP"
+              [class.is-invalid]="checkoutForm.get('address')?.touched && checkoutForm.get('address')?.invalid"></textarea>
+            <div class="invalid-feedback small" *ngIf="checkoutForm.get('address')?.touched && checkoutForm.get('address')?.invalid">
+              Please provide delivery address.
+            </div>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label text-secondary small">Special Instructions (Optional)</label>
+            <input 
+              type="text" 
+              class="form-control modal-input" 
+              formControlName="notes" 
+              placeholder="e.g. Ring bell, leave at reception, extra napkins">
+          </div>
+        </div>
+
+        <!-- Summary in modal -->
+        <div class="d-flex justify-content-between align-items-center p-3 rounded-3 bg-dark border border-secondary border-opacity-25 mb-4">
+          <span class="text-secondary small">Total Payment (Due on delivery):</span>
+          <span class="text-gold fw-bold fs-5">${{ grandTotal | number:'1.2-2' }}</span>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex gap-3">
+          <button type="button" class="btn btn-outline-light font-accent w-50 py-2" (click)="closeCheckout()">
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="btn btn-gold font-accent w-50 py-2 fw-semibold d-flex align-items-center justify-content-center"
+            [disabled]="isCheckingOut">
+            <span class="spinner-border spinner-border-sm me-2" *ngIf="isCheckingOut"></span>
+            {{ isCheckingOut ? 'Placing Order...' : 'Confirm & Place Order' }}
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

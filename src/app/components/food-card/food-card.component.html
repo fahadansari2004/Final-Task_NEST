@@ -1,9 +1,26 @@
-<div class="card glass-card h-100 overflow-hidden" [routerLink]="['/food', recipe.id]">
+<div class="card glass-card h-100 overflow-hidden position-relative" [class.card-unavailable]="recipe.is_available === false" [routerLink]="['/food', recipe.id]">
   <!-- Card Image Section -->
   <div class="image-wrapper position-relative">
     <img [src]="recipe.image" [alt]="recipe.name" class="card-img-top food-image" loading="lazy">
+    
+    <!-- Cuisine badge -->
     <div class="cuisine-badge position-absolute top-3 start-3">
       <span class="badge font-accent">{{ recipe.cuisine }}</span>
+    </div>
+
+    <!-- Availability Badge -->
+    <div class="availability-badge position-absolute top-3 end-3">
+      <span *ngIf="recipe.is_available !== false" class="badge bg-success bg-opacity-75 text-white font-accent px-2 py-1 shadow-sm">
+        <i class="fa-solid fa-circle-check me-1"></i> Available
+      </span>
+      <span *ngIf="recipe.is_available === false" class="badge bg-danger text-white font-accent px-2 py-1 shadow-sm animate-pulse">
+        <i class="fa-solid fa-ban me-1"></i> Sold Out
+      </span>
+    </div>
+
+    <!-- Dimmed overlay on image when sold out -->
+    <div *ngIf="recipe.is_available === false" class="sold-out-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+      <span class="sold-out-stamp font-accent text-uppercase fw-bold">Sold Out Today</span>
     </div>
   </div>
 
@@ -24,10 +41,15 @@
       </div>
     </div>
 
-    <!-- Category Label -->
-    <p class="text-muted small mb-3">
-      <i class="fa-solid fa-utensils me-1 text-gold"></i> Category: <strong>{{ recipe.category }}</strong>
-    </p>
+    <!-- Category Label & Availability Notice -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <p class="text-muted small mb-0">
+        <i class="fa-solid fa-utensils me-1 text-gold"></i> Category: <strong>{{ recipe.category }}</strong>
+      </p>
+      <span *ngIf="recipe.is_available === false" class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 small" style="font-size: 0.72rem;">
+        Not Available
+      </span>
+    </div>
 
     <!-- Price and Add to Cart Section -->
     <div class="d-flex align-items-center justify-content-between mt-auto pt-3 border-top border-light">
@@ -36,8 +58,13 @@
         <span class="price-val text-gold h5 mb-0 fw-bold font-accent">${{ recipe.price | number:'1.2-2' }}</span>
       </div>
       <div class="actions">
-        <button class="btn-cart-circle" (click)="addToCart($event)" title="Add to Cart">
-          <i class="fa-solid fa-cart-plus"></i>
+        <button 
+          class="btn-cart-circle" 
+          [class.btn-disabled]="recipe.is_available === false"
+          [disabled]="recipe.is_available === false"
+          (click)="addToCart($event)" 
+          [title]="recipe.is_available === false ? 'This item is currently sold out' : 'Add to Cart'">
+          <i class="fa-solid" [ngClass]="recipe.is_available === false ? 'fa-ban text-muted' : 'fa-cart-plus'"></i>
         </button>
       </div>
     </div>
